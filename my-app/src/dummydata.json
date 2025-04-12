@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "title": "Main Library",
+        "description": "Great study rooms and lots of queit areas!",
+        "image": "https://www.familysearch.org/en/wiki/img_auth.php/thumb/2/24/UGAMainLibrary.jpg/600px-UGAMainLibrary.jpg"
+    },
+    {
+        "id": 2,
+        "title": "Jittery Joes",
+        "description": "A vibey cafe downtown",
+        "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/26/04/51/jittery-joe-s.jpg?w=900&h=500&s=1"
+    },
+    {
+        "id": 3,
+        "title": "Science Library",
+        "description": "Smaller than the main library but still a good study spot",
+        "image": "https://www.libs.uga.edu/sites/default/files/inline-images/libs2.jpg"
+    }
+]
