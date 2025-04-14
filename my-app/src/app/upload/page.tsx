@@ -9,7 +9,7 @@ export default function UploadPage() {
     <div 
       className="min-h-screen"
       style={{
-        backgroundImage: 'url(/images/LightBlueBackground.png)', 
+        backgroundImage: 'url(/images/DarkBlueBackground.png)', 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
