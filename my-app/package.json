@@ -9,7 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "15.2.2",
+    "@googlemaps/js-api-loader": "^1.16.8",
+    "@vis.gl/react-google-maps": "^1.5.2",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.2",
+    "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
