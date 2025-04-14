@@ -6,25 +6,34 @@ const AddStudySpot = () => {
   // State for the new study spot
   const [studySpot, setStudySpot] = useState({
     name: '',
-    location: '',
-    noiseLevel: '',
-    availableHours: '',
-    seatingCapacity: '',
-    hasOutlets: false,
-    hasWifi: false,
-    description: ''
+    description: '',
+    address: '',
+    extraDirection: '',
+    attributes: {
+      outdoors: false,
+      indoors: false,
+      free: false
+    }
   });
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
-    
-    // Handle checkboxes differently than text inputs
-    const newValue = type === 'checkbox' ? checked : value;
+    const { name, value } = e.target as HTMLInputElement;
     
     setStudySpot(prevSpot => ({
       ...prevSpot,
-      [name]: newValue
+      [name]: value
+    }));
+  };
+
+  // Handle attribute changes (checkboxes)
+  const handleAttributeChange = (attribute: string) => {
+    setStudySpot(prevSpot => ({
+      ...prevSpot,
+      attributes: {
+        ...prevSpot.attributes,
+        [attribute]: !prevSpot.attributes[attribute as keyof typeof prevSpot.attributes]
+      }
     }));
   };
 
@@ -37,136 +46,119 @@ const AddStudySpot = () => {
     // Clear form inputs after submission
     setStudySpot({
       name: '',
-      location: '',
-      noiseLevel: '',
-      availableHours: '',
-      seatingCapacity: '',
-      hasOutlets: false,
-      hasWifi: false,
-      description: ''
+      description: '',
+      address: '',
+      extraDirection: '',
+      attributes: {
+        outdoors: false,
+        indoors: false,
+        free: false
+      }
     });
   };
 
   return (
-    <div className="bg-white bg-opacity-90 rounded-xl p-8 max-w-xl mx-auto my-8 shadow-md">
-      <h2 className="text-2xl font-bold text-center text-blue-800 mb-6">Add New Study Spot</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col mb-4">
-          <label htmlFor="name" className="mb-2 font-medium text-gray-700">Name of Study Spot:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={studySpot.name}
-            onChange={handleChange}
-            required
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-          />
-        </div>
-
-        <div className="flex flex-col mb-4">
-          <label htmlFor="location" className="mb-2 font-medium text-gray-700">Location on Campus:</label>
-          <input
-            type="text"
-            id="location"
-            name="location"
-            value={studySpot.location}
-            onChange={handleChange}
-            required
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-          />
-        </div>
-
-        <div className="flex flex-col mb-4">
-          <label htmlFor="noiseLevel" className="mb-2 font-medium text-gray-700">Noise Level:</label>
-          <select
-            id="noiseLevel"
-            name="noiseLevel"
-            value={studySpot.noiseLevel}
-            onChange={handleChange}
-            required
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-          >
-            <option value="">Select Noise Level</option>
-            <option value="silent">Silent</option>
-            <option value="quiet">Quiet</option>
-            <option value="moderate">Moderate</option>
-            <option value="loud">Loud</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col mb-4">
-          <label htmlFor="availableHours" className="mb-2 font-medium text-gray-700">Available Hours:</label>
-          <input
-            type="text"
-            id="availableHours"
-            name="availableHours"
-            placeholder="e.g., Mon-Fri: 8am-10pm"
-            value={studySpot.availableHours}
-            onChange={handleChange}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-          />
-        </div>
-
-        <div className="flex flex-col mb-4">
-          <label htmlFor="seatingCapacity" className="mb-2 font-medium text-gray-700">Seating Capacity:</label>
-          <input
-            type="number"
-            id="seatingCapacity"
-            name="seatingCapacity"
-            min="1"
-            value={studySpot.seatingCapacity}
-            onChange={handleChange}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-          />
-        </div>
-
-        <div className="flex gap-8 mb-4">
-          <div className="flex items-center">
+    <div className="flex justify-center items-center min-h-screen p-4">
+      <div className="w-full max-w-md bg-[#1a2642] bg-opacity-90 rounded-lg p-8 shadow-xl text-white">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-1">
+            <h2 className="text-xl font-medium">Name</h2>
             <input
-              type="checkbox"
-              id="hasOutlets"
-              name="hasOutlets"
-              checked={studySpot.hasOutlets}
+              type="text"
+              name="name"
+              value={studySpot.name}
               onChange={handleChange}
-              className="w-4 h-4 mr-2 text-blue-500 accent-blue-500"
+              placeholder="Name of location"
+              className="w-full p-3 rounded bg-[#2a3651] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
-            <label htmlFor="hasOutlets" className="font-medium text-gray-700">Has Power Outlets</label>
           </div>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="hasWifi"
-              name="hasWifi"
-              checked={studySpot.hasWifi}
+          <div className="space-y-1">
+            <h2 className="text-xl font-medium">Description</h2>
+            <textarea
+              name="description"
+              value={studySpot.description}
               onChange={handleChange}
-              className="w-4 h-4 mr-2 text-blue-500 accent-blue-500"
-            />
-            <label htmlFor="hasWifi" className="font-medium text-gray-700">Has WiFi</label>
+              placeholder="Description of location"
+              rows={3}
+              className="w-full p-3 rounded bg-[#2a3651] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
           </div>
-        </div>
 
-        <div className="flex flex-col mb-4">
-          <label htmlFor="description" className="mb-2 font-medium text-gray-700">Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            value={studySpot.description}
-            onChange={handleChange}
-            rows={4}
-            placeholder="Describe the study spot (ambiance, best times to go, etc.)"
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-          ></textarea>
-        </div>
+          <div className="space-y-1">
+            <h2 className="text-xl font-medium">Address</h2>
+            <input
+              type="text"
+              name="address"
+              value={studySpot.address}
+              onChange={handleChange}
+              placeholder="Address"
+              className="w-full p-3 rounded bg-[#2a3651] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-        <button 
-          type="submit" 
-          className="px-6 py-3 bg-orange-500 text-white font-semibold rounded-md mx-auto mt-2 hover:bg-orange-600 transition duration-200 active:scale-95"
-        >
-          Add Study Spot
-        </button>
-      </form>
+          <div className="space-y-1">
+            <h2 className="text-xl font-medium">Extra direction</h2>
+            <input
+              type="text"
+              name="extraDirection"
+              value={studySpot.extraDirection}
+              onChange={handleChange}
+              placeholder="Extra directions"
+              className="w-full p-3 rounded bg-[#2a3651] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xl font-medium">Attributes</h2>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => handleAttributeChange('outdoors')}
+                className={`px-4 py-2 rounded ${
+                  studySpot.attributes.outdoors ? 'bg-blue-600' : 'bg-[#2a3651]'
+                }`}
+              >
+                Outdoors
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAttributeChange('indoors')}
+                className={`px-4 py-2 rounded ${
+                  studySpot.attributes.indoors ? 'bg-blue-600' : 'bg-[#2a3651]'
+                }`}
+              >
+                Indoors
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAttributeChange('free')}
+                className={`px-4 py-2 rounded ${
+                  studySpot.attributes.free ? 'bg-blue-600' : 'bg-[#2a3651]'
+                }`}
+              >
+                Free
+              </button>
+              <button
+                type="button"
+                className="px-4 py-2 rounded bg-[#2a3651] text-white"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-4 flex justify-center">
+            <button
+              type="submit"
+              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
