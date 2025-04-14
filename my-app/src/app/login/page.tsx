@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import { useRouter } from 'next/navigation';
+
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -9,16 +11,27 @@ export default function LoginPage() {
     password: '',
   });
 
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const router = useRouter();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Logging in:', formData);
-    // TODO: Connect to your login endpoint
+  
+    // Simulate login success
+    localStorage.setItem('isLoggedIn', 'true');
+  
+    // ✅ Redirect to user profile page
+    router.push('/user');
   };
+  
+
+  
+
 
   return (
     <main className="min-h-screen relative overflow-hidden">

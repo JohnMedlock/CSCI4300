@@ -2,6 +2,7 @@
 
 import Navbar from '@/components/Navbar';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; 
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -16,11 +17,20 @@ export default function RegisterPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const router = useRouter();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Registering:', formData);
-    // TODO: Send data to API
+  
+    
+    localStorage.setItem('isLoggedIn', 'true');
+  
+    
+    router.push('/user');
   };
+  
+
+  
+
 
   return (
     <main className="min-h-screen relative overflow-hidden">
