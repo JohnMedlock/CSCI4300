@@ -11,14 +11,14 @@ export default function UserPage() {
   const user = {
     name: "John Doe",
     email: "myemail@email.com",
-    profileImage: "/profile-pic.jpg", // Replace with a local asset or public image URL
+    profileImage: "/ProfilePicture.png"
   };
 
   const likedSpots = [
     {
       name: "1000 Faces Coffee",
       address: "510 N Thomas St, Athens, GA 30601",
-      image: "/1000faces.jpg", // Add this to /public
+      image: "/1000FacesCoffee.png", // Add this to /public
     },
   ];
 
@@ -26,7 +26,7 @@ export default function UserPage() {
     {
       name: "1000 Faces Coffee",
       address: "510 N Thomas St, Athens, GA 30601",
-      image: "/1000faces.jpg", // Add this to /public
+      image: "/1000FacesCoffee.png", // Add this to /public
     },
   ];
 
