@@ -1,21 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
 
-  // Simulate user state (replace this with real auth logic)
-  const [user, setUser] = useState(null);
+  // Simulated login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Example: fetch user from localStorage or an API on mount
+  // Optional: check localStorage for persistent login
   useEffect(() => {
-    // Replace this with real authentication check
-    const storedUser = null; // e.g., localStorage.getItem('user');
-    setUser(storedUser);
-  }, []);
+    const storedLogin = localStorage.getItem('isLoggedIn');
+    setIsLoggedIn(storedLogin === 'true');
+  }, [pathname]); // ✅ Trigger re-check on route change
+
+  // Save login state to localStorage
+  const handleLogin = () => {
+    localStorage.setItem('isLoggedIn', 'true');
+    setIsLoggedIn(true);
+    
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    setIsLoggedIn(false);
+    router.push('/');
+  };
 
   const navItems = [
     { name: 'Map', href: '/map' },
@@ -42,33 +55,37 @@ const Navbar = () => {
           </Link>
         ))}
 
-        {user ? (
-          <Link
-            href="/user"
-            className={`hover:underline ${
-              pathname === '/user' ? 'font-semibold' : ''
-            }`}
-          >
-            {user.username || 'User'}
-          </Link>
-        ) : (
+        {isLoggedIn ? (
           <>
             <Link
-              href="/login"
+              href="/user"
               className={`hover:underline ${
-                pathname === '/login' ? 'font-semibold' : ''
+                pathname === '/user' ? 'font-semibold' : ''
               }`}
+            >
+              johndoe
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 px-4 py-1 rounded-md"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={handleLogin}
+              className="bg-blue-500 px-4 py-1 rounded-md"
             >
               Login
-            </Link>
-            <Link
-              href="/register"
-              className={`hover:underline ${
-                pathname === '/register' ? 'font-semibold' : ''
-              }`}
+            </button>
+            <button
+              onClick={handleLogin}
+              className="bg-green-500 px-4 py-1 rounded-md"
             >
               Register
-            </Link>
+            </button>
           </>
         )}
       </div>
@@ -77,4 +94,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

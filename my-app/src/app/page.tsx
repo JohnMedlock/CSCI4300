@@ -5,7 +5,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Footer from '@/components/Footer';
 
+
+
 export default function SplashPage() {
+
+  
   return (
     <main className="min-h-screen relative overflow-hidden bg-white">
       {/* Background Layer */}
