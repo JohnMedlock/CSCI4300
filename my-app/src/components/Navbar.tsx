@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const pathname = usePathname();
+  const loggedIn = localStorage.getItem('isLoggedIn');
 
   // Simulate user state (replace this with real auth logic)
   const [user, setUser] = useState(null);
@@ -42,14 +43,14 @@ const Navbar = () => {
           </Link>
         ))}
 
-        {user ? (
+        {loggedIn ? (
           <Link
             href="/user"
             className={`hover:underline ${
               pathname === '/user' ? 'font-semibold' : ''
             }`}
           >
-            {user.username || 'User'}
+            harry potter
           </Link>
         ) : (
           <>

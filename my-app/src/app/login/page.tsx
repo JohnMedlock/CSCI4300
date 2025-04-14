@@ -25,7 +25,7 @@ export default function LoginPage() {
     // Simulate login success
     localStorage.setItem('isLoggedIn', 'true');
   
-    // ✅ Redirect to user profile page
+    // Redirect to user profile page
     router.push('/user');
   };
   
