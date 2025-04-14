@@ -1,17 +1,40 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+
 type SpotCardProps = {
-    title: string;
-    description: string;
-    image: string;
+  title: string;
+  address: string;
+  description: string;
+  image: string;
+  tags: string[];
 };
 
-const SpotCard = ({title, description, image}: SpotCardProps) => {
-    return (
-        <div className="bg-zinc-950 p-4 rounded-lg shadow-md outline-2 outline-white">
-            <img src={image} className="rounded mb-2" />
-            <h2 className="text-lg font-semibold text-white">{title}</h2>
-            <h5 className="text-sm text-white">{description}</h5>
+const SpotCard = ({ title, address, description, image, tags }: SpotCardProps) => {
+  return (
+    <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden text-white">
+      <div className="relative">
+        <img src={image} alt={title} className="w-full h-32 object-cover" />
+        <button
+          className="absolute top-2 right-2 bg-black bg-opacity-70 border border-white/20 rounded-full p-2 hover:scale-110 transition z-10"
+          aria-label="Favorite"
+        >
+          <FontAwesomeIcon icon={regularHeart} className="text-white text-xl" />
+        </button>
+
+      </div>
+      <div className="p-3">
+        <h3 className="text-lg font-bold">{title}</h3>
+        <p className="text-sm text-gray-300">{address}</p>
+        <p className="text-sm mt-2 line-clamp-2">{description}</p>
+        <div className="text-xs text-gray-400 mt-2 flex flex-wrap gap-1">
+          {tags.map((tag, i) => (
+            <span key={i}>• {tag}</span>
+          ))}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default SpotCard;
+

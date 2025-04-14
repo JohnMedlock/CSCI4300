@@ -14,14 +14,6 @@
     "description": "A vibey cafe downtown",
     "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/26/04/51/jittery-joe-s.jpg?w=900&h=500&s=1",
     "tags": ["Coffee", "Cozy", "Outlets", "Downtown"]
-  },
-  {
-    "id": 3,
-    "title": "Science Library",
-    "address": "210 D. W. Brooks Dr, Athens, GA 30602",
-    "description": "Smaller than the main library but still a good study spot",
-    "image": "https://www.libs.uga.edu/sites/default/files/inline-images/libs2.jpg",
-    "tags": ["Quiet", "Wi-Fi", "STEM", "Outlets"]
   }
 ]
 
