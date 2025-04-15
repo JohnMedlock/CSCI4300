@@ -6,7 +6,12 @@ import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const pathname = usePathname();
-  const loggedIn = localStorage.getItem('isLoggedIn');
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    setLoggedIn(isLoggedIn);
+  }, []);
 
   // Simulate user state (replace this with real auth logic)
   const [user, setUser] = useState(null);

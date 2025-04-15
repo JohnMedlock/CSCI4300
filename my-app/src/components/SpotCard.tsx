@@ -1,5 +1,8 @@
+'use client';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import { useEffect, useState } from 'react';
 
 type SpotCardProps = {
   title: string;
@@ -10,16 +13,26 @@ type SpotCardProps = {
 };
 
 const SpotCard = ({ title, address, description, image, tags }: SpotCardProps) => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  
+    useEffect(() => {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      setLoggedIn(isLoggedIn);
+    }, []);
   return (
     <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden text-white">
       <div className="relative">
         <img src={image} alt={title} className="w-full h-32 object-cover" />
-        <button
-          className="absolute top-2 right-2 bg-black bg-opacity-70 border border-white/20 rounded-full p-2 hover:scale-110 transition z-10"
-          aria-label="Favorite"
-        >
-          <FontAwesomeIcon icon={regularHeart} className="text-white text-xl" />
-        </button>
+        {loggedIn ? (
+          <button
+            className="absolute top-2 right-2 bg-black bg-opacity-70 border border-white/20 rounded-full p-2 hover:scale-110 transition z-10"
+            aria-label="Favorite"
+          >
+            <FontAwesomeIcon icon={regularHeart} className="text-white text-xl" />
+          </button>
+        ) : (
+          <></>
+        )};
 
       </div>
       <div className="p-3">

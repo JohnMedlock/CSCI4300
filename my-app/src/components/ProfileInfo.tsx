@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useEffect } from 'react';
 import Navbar from "@/components/Navbar";
+import Link from 'next/link';
 
 export default function ProfileInfo() {
   const router = useRouter();
@@ -87,7 +88,12 @@ export default function ProfileInfo() {
                 </div>
               </div>
             ))}
-            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md">Add a spot</button>
+            <Link
+              href="/upload"
+              className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md"
+            >
+              Add a spot
+            </Link>
           </div>
 
           {/* Uploaded Study Spots */}
