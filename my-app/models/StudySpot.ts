@@ -5,17 +5,15 @@ export interface IStudySpot extends Document {
     description: string;
     address: string,
     coordinates: {
-        lat: Number,
-        lng: Number
+        lat: number,
+        lng: number
     },
     attributes: {
         outdoors?: boolean;
         indoors?: boolean;
         free?: boolean;
     },
-    /*tags?: string[],
-    images?: string[];
-    */
+    image: string;
 }
 
 const StudySpotSchema = new Schema<IStudySpot>({
@@ -34,9 +32,7 @@ const StudySpotSchema = new Schema<IStudySpot>({
         },
         required: false
     },
-    /*tags: [{ type: String }],
-    images: [{type: String}]
-    */
+    image: {type: String}
 });
 
 const StudySpot = models.StudySpot || mongoose.model<IStudySpot>("StudySpot", StudySpotSchema);
