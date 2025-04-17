@@ -4,8 +4,10 @@ import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 import Image from 'next/image';
 import Footer from '@/components/Footer';
+import connectMongoDB from '../../config/mongodb';
 
 export default function SplashPage() {
+  connectMongoDB();
   return (
     <main className="min-h-screen relative overflow-hidden bg-white">
       {/* Background Layer */}
