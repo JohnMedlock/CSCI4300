@@ -19,10 +19,10 @@ export async function PUT(request: NextRequest, {params}: RouteParams) {
     const {id} = await params;
     const { 
             name: name, description: description, address: address, 
-            coordinates: coordinates, tags: tags, images: images 
+            coordinates: coordinates, attributes: attributes, image: image 
     } = await request.json();
     await connectMongoDB;
-    await StudySpot.findByIdAndUpdate(id, {name, description, address, coordinates, tags, images});
+    await StudySpot.findByIdAndUpdate(id, {name, description, address, coordinates, attributes, image});
     return NextResponse.json({message: "Study spot updated"}, {status: 200});
 }
 
