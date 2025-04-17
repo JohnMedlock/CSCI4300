@@ -1,0 +1,75 @@
+[
+  {
+    "id": 1,
+    "title": "Main Library",
+    "address": "320 S Jackson St, Athens, GA 30602",
+    "description": "Great study rooms and lots of quiet areas!",
+    "image": "https://www.familysearch.org/en/wiki/img_auth.php/thumb/2/24/UGAMainLibrary.jpg/600px-UGAMainLibrary.jpg",
+    "tags": ["Quiet", "Wi-Fi", "Group Rooms", "Outlets"],
+    "photos": [
+      "https://www.libs.uga.edu/sites/default/files/styles/card_620x330/public/2022-03/UGAMain_0.jpg",
+      "https://news.uga.edu/wp-content/uploads/2021/04/20210329_UgaLibraries_32.preview.jpg"
+    ],
+    "reviews": [
+      {
+        "user": "Alex Tawes",
+        "text": "Plenty of quiet corners and great views from upper floors.",
+        "rating": 5
+      },
+      {
+        "user": "John Medlock",
+        "text": "A classic study spot. Gets packed around finals though!",
+        "rating": 4
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Jittery Joes",
+    "address": "297 E Broad St, Athens, GA 30601",
+    "description": "A vibey cafe downtown",
+    "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/26/04/51/jittery-joe-s.jpg?w=900&h=500&s=1",
+    "tags": ["Coffee", "Cozy", "Outlets", "Downtown"],
+    "photos": [
+      "https://athenscoffeeroasters.com/wp-content/uploads/2021/10/20210911_112312-scaled.jpg",
+      "https://media.timeout.com/images/105240189/750/422/image.jpg"
+    ],
+    "reviews": [
+      {
+        "user": "Maya T.",
+        "text": "Awesome espresso and mellow music. Great for reading.",
+        "rating": 5
+      },
+      {
+        "user": "Trevon G.",
+        "text": "Limited seating but the vibe is unbeatable.",
+        "rating": 4
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Science Library",
+    "address": "210 D. W. Brooks Dr, Athens, GA 30602",
+    "description": "Smaller than the main library but still a good study spot",
+    "image": "https://www.libs.uga.edu/sites/default/files/inline-images/libs2.jpg",
+    "tags": ["Quiet", "Wi-Fi", "STEM", "Outlets"],
+    "photos": [
+      "https://www.libs.uga.edu/sites/default/files/inline-images/scilib2.jpg",
+      "https://c1.staticflickr.com/5/4325/35445614573_7a6d9f2752_b.jpg"
+    ],
+    "reviews": [
+      {
+        "user": "Avery Lin",
+        "text": "Perfect for deep focus. Love the clean design.",
+        "rating": 5
+      },
+      {
+        "user": "Chris B.",
+        "text": "Feels a little cramped, but quiet and solid Wi-Fi.",
+        "rating": 3
+      }
+    ]
+  }
+]
+

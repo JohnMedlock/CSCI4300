@@ -1,27 +1,35 @@
-import SpotCard from "./SpotCard";
-import spotData from "../dummydata.json";
+import SpotCard from './SpotCard';
 
 type Spot = {
   id: number;
   title: string;
-  description: string;
   address: string;
+  description: string;
   image: string;
-  tags?: string[];
+  tags: string[];
 };
 
-const SpotList = () => {
+const SpotList = ({
+  spots,
+  onSelect,
+  selectedId
+}: {
+  spots: Spot[];
+  onSelect: (spot: Spot) => void;
+  selectedId: number | null | undefined;
+}) => {
   return (
     <div className="flex flex-col gap-4">
-      {spotData.map((spot: Spot) => (
-        <SpotCard
+      {spots.map((spot) => (
+        <div
           key={spot.id}
-          title={spot.title}
-          description={spot.description}
-          address={spot.address}
-          image={spot.image}
-          tags={spot.tags || []}
-        />
+          onClick={() => onSelect(spot)}
+          className={`cursor-pointer rounded transition 
+            ${selectedId === spot.id ? 'bg-[#354B74]' : 'bg-[#1a1a1a]'} 
+            hover:bg-[#2a2a2a]`}
+        >
+          <SpotCard {...spot} />
+        </div>
       ))}
     </div>
   );

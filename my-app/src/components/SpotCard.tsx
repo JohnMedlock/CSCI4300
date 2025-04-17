@@ -30,9 +30,7 @@ const SpotCard = ({ title, address, description, image, tags }: SpotCardProps) =
           >
             <FontAwesomeIcon icon={regularHeart} className="text-white text-xl" />
           </button>
-        ) : (
-          <></>
-        )};
+        ) : null}
 
       </div>
       <div className="p-3">
