@@ -8,8 +8,14 @@ export interface IStudySpot extends Document {
         lat: Number,
         lng: Number
     },
-    tags?: string[],
+    attributes: {
+        outdoors?: boolean;
+        indoors?: boolean;
+        free?: boolean;
+    },
+    /*tags?: string[],
     images?: string[];
+    */
 }
 
 const StudySpotSchema = new Schema<IStudySpot>({
@@ -17,11 +23,20 @@ const StudySpotSchema = new Schema<IStudySpot>({
     description: { type: String, required: true },
     address: {type: String},
     coordinates: {
-        lat: { type: Number, required: true },
-        lng: { type: Number, required: true },
+        lat: { type: Number, required: false },
+        lng: { type: Number, required: false },
     },
-    tags: [{ type: String }],
+    attributes: {
+        type: {
+          outdoors: { type: Boolean, default: false },
+          indoors: { type: Boolean, default: false },
+          free: { type: Boolean, default: false }
+        },
+        required: false
+    },
+    /*tags: [{ type: String }],
     images: [{type: String}]
+    */
 });
 
 const StudySpot = models.StudySpot || mongoose.model<IStudySpot>("StudySpot", StudySpotSchema);
