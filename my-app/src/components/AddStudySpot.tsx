@@ -46,7 +46,7 @@ const AddStudySpot = () => {
     
     try {
       // Send data to API
-      const response = await fetch('/api/study-spots', {
+      const response = await fetch('/api/spots', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -200,3 +200,4 @@ const AddStudySpot = () => {
 };
 
 export default AddStudySpot;
+
