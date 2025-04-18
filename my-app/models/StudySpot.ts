@@ -8,7 +8,7 @@ export interface IStudySpot extends Document {
         lat: number,
         lng: number
     },
-    attributes: {
+    attributes?: {
         outdoors?: boolean;
         indoors?: boolean;
         free?: boolean;

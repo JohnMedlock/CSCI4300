@@ -19,6 +19,7 @@ const SpotList = ({
   selectedId: number | null | undefined;
 }) => {
   return (
+    // map the study spot information to SpotCard(s)
     <div className="flex flex-col gap-4">
       {spots.map((spot) => (
         <div
