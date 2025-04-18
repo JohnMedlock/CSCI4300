@@ -3,6 +3,7 @@
 import { APIProvider, Map as GoogleMap, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 
+// study spot props
 type StudySpot = {
   _id: string;
   name: string;
@@ -12,32 +13,16 @@ type StudySpot = {
     lat: number;
     lng: number;
   };
-  attributes: {
-    outdoors?: boolean;
-    indoors?: boolean;
-    free?: boolean;
-  };
+  tags: string[];
   image?: string; 
 };
 
-const MapComponent = () => {
-  const [studySpots, setStudySpots] = useState<StudySpot[]>([]);
+type MapProps = {
+  studySpots: StudySpot[];
+}
 
-  // get all of the study spots
-  useEffect(() => {
-    const fetchStudySpots = async () => {
-      try {
-        const res = await fetch("/api/spots");
-        const data = await res.json();
-        console.log("Fetched spots:", data.spots);
-        setStudySpots(data.spots);
-      } catch (err) {
-        console.error("Failed to fetch study spots:", err);
-      }
-    };
-
-    fetchStudySpots();
-  }, []);
+const MapComponent = (props: MapProps) => {
+  const {studySpots} = props;
 
   // load the map
   return (

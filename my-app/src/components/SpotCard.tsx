@@ -10,15 +10,15 @@ type SpotCardProps = {
   name: string;
   description: string;
   address: string;
-  attributes?: {
-    outdoors?: boolean;
-    indoors?: boolean;
-    free?: boolean;
+  coordinates: {
+    lat: number;
+    lng: number;
   };
+  tags: string[];
   image?: string; 
 };
 
-const SpotCard = ({ name, address, description, image, attributes }: SpotCardProps) => {
+const SpotCard = ({ name, address, description, image, tags }: SpotCardProps) => {
   const [loggedIn, setLoggedIn] = useState(false);
   
     useEffect(() => {

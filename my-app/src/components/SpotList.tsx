@@ -1,13 +1,22 @@
-import SpotCard from './SpotCard';
+'use client';
 
+import SpotCard from "./SpotCard";
+import { useEffect, useState } from "react";
+
+// study spot props
 type Spot = {
-  id: number;
-  title: string;
-  address: string;
+  _id: string;
+  name: string;
   description: string;
-  image: string;
+  address: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
   tags: string[];
+  image?: string; 
 };
+
 
 const SpotList = ({
   spots,
@@ -18,15 +27,33 @@ const SpotList = ({
   onSelect: (spot: Spot) => void;
   selectedId: number | null | undefined;
 }) => {
+  const [studySpots, setStudySpots] = useState<Spot[]>([]);
+
+  // get all of the study spots
+  useEffect(() => {
+    const fetchStudySpots = async () => {
+      try {
+        const res = await fetch("/api/spots");
+        const data = await res.json();
+        console.log("Fetched spots:", data.spots);
+        setStudySpots(data.spots);
+      } catch (err) {
+        console.error("Failed to fetch study spots:", err);
+      }
+    };
+
+    fetchStudySpots();
+  }, []);
+
   return (
     // map the study spot information to SpotCard(s)
     <div className="flex flex-col gap-4">
-      {spots.map((spot) => (
+      {studySpots.map((spot) => (
         <div
-          key={spot.id}
+          key={spot._id}
           onClick={() => onSelect(spot)}
           className={`cursor-pointer rounded transition 
-            ${selectedId === spot.id ? 'bg-[#354B74]' : 'bg-[#1a1a1a]'} 
+            'bg-[#354B74]' : 'bg-[#1a1a1a]'} 
             hover:bg-[#2a2a2a]`}
         >
           <SpotCard {...spot} />
