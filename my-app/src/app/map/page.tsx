@@ -66,7 +66,7 @@ export default function MapPage() {
               <SpotDetailPanel spot={selectedSpot} />
             </div>
             <div className="w-1/2 h-full">
-              <Map />
+              <Map studySpots={studySpots}/>
             </div>
           </div>
         ) : (
