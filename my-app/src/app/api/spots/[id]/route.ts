@@ -10,19 +10,16 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, {params}: RouteParams) {
     const {id} = await params;
-    await connectMongoDB;
+    await connectMongoDB();
     const spot = await StudySpot.findOne({_id: id});
     return NextResponse.json({spot}, {status: 200});
 }
 
 export async function PUT(request: NextRequest, {params}: RouteParams) {
     const {id} = await params;
-    const { 
-            name: name, description: description, address: address, 
-            coordinates: coordinates, attributes: attributes, image: image 
-    } = await request.json();
-    await connectMongoDB;
-    await StudySpot.findByIdAndUpdate(id, {name, description, address, coordinates, attributes, image});
+    const { name, description, address, coordinates, tags, image } = await request.json();
+    await connectMongoDB();
+    await StudySpot.findByIdAndUpdate(id, {name, description, address, coordinates, tags, image});
     return NextResponse.json({message: "Study spot updated"}, {status: 200});
 }
 
