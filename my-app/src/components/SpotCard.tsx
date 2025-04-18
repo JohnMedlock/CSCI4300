@@ -44,7 +44,9 @@ const SpotCard = ({ name, address, description, image, tags }: SpotCardProps) =>
         <p className="text-sm text-gray-300">{address}</p>
         <p className="text-sm mt-2 line-clamp-2">{description}</p>
         <div className="text-xs text-gray-400 mt-2 flex flex-wrap gap-1">
-          <h3>complete attribute logic</h3>
+        {tags.map((tag, i) => (
+            <span key={i}>• {tag}</span>
+          ))}
         </div>
       </div>
     </div>
