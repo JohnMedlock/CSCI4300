@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useLoadScript, Autocomplete } from '@react-google-maps/api';
 
 const AddStudySpot = () => {
   // Loading and error states
@@ -15,13 +16,15 @@ const AddStudySpot = () => {
     extraDirection: string;
     tags: string[];
     coordinates: { lat: number; lng: number };
+    image: string;
   }>({
     name: '',
     description: '',
     address: '',
     extraDirection: '',
     tags: [], 
-    coordinates: { lat: 0, lng: 0 }
+    coordinates: { lat: 0, lng: 0 },
+    image: ''
   });
 
   const handleChange = (
@@ -85,7 +88,8 @@ const AddStudySpot = () => {
         address: '',
         extraDirection: '',
         tags: [],
-        coordinates: { lat: 0, lng: 0 }
+        coordinates: { lat: 0, lng: 0 },
+        image: ''
       });
     } catch (error: any) {
       console.error('Error adding study spot:', error);
@@ -97,6 +101,52 @@ const AddStudySpot = () => {
 
   // Available tags 
   const availableTags = ['outdoors', 'indoors', 'free', 'wifi', 'quiet', 'outlets'];
+
+  // google autocomplete 
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    libraries: ['places'],
+  });
+  
+  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  
+  // once user selects address get necessary information
+  const handlePlaceChanged = () => {
+    if (autocomplete) {
+      const place = autocomplete.getPlace();
+  
+      const placeId = place.place_id;
+      const location = place.geometry?.location;
+  
+      if (!placeId || !location) return;
+  
+      const service = new google.maps.places.PlacesService(document.createElement('div'));
+  
+      service.getDetails(
+        {
+          placeId,
+          fields: ['formatted_address', 'geometry', 'photos', 'name'],
+        },
+        (details, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK && details) {
+            const photoUrl = details.photos?.[0]?.getUrl({ maxWidth: 800 });
+  
+            setStudySpot(prev => ({
+              ...prev,
+              address: details.formatted_address || '',
+              coordinates: {
+                lat: details.geometry?.location?.lat() || 0,
+                lng: details.geometry?.location?.lng() || 0,
+              },
+              image: photoUrl || '',
+            }));
+          } else {
+            console.error('Failed to get place details:', status);
+          }
+        }
+      );
+    }
+  };
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -146,14 +196,38 @@ const AddStudySpot = () => {
 
               <div>
                 <label className="block text-sm font-semibold mb-1">Address</label>
-                <input
-                  type="text"
-                  name="address"
-                  placeholder="Address"
-                  value={studySpot.address}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
-                />
+                {isLoaded ? (
+                  <Autocomplete
+                    onLoad={setAutocomplete}
+                    onPlaceChanged={handlePlaceChanged}
+                  >
+                    <input
+                      type="text"
+                      name="address"
+                      placeholder="Enter address"
+                      value={studySpot.address}
+                      onChange={handleChange}
+                      className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
+                    />
+                  </Autocomplete>
+                ) : (
+                  <input
+                    type="text"
+                    name="address"
+                    placeholder="Loading..."
+                    disabled
+                    className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
+                  />
+                )}
+                {studySpot.image && (
+                  <div className="mt-4">
+                    <img
+                      src={studySpot.image}
+                      alt="Preview"
+                      className="w-full h-auto rounded-lg shadow"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>
