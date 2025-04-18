@@ -8,16 +8,20 @@ const AddStudySpot = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const [studySpot, setStudySpot] = useState({
+  const [studySpot, setStudySpot] = useState<{
+    name: string;
+    description: string;
+    address: string;
+    extraDirection: string;
+    tags: string[];
+    coordinates: { lat: number; lng: number };
+  }>({
     name: '',
     description: '',
     address: '',
     extraDirection: '',
-    attributes: {
-      outdoors: false,
-      indoors: false,
-      free: false,
-    },
+    tags: [], 
+    coordinates: { lat: 0, lng: 0 }
   });
 
   const handleChange = (
@@ -27,14 +31,25 @@ const AddStudySpot = () => {
     setStudySpot((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAttributeChange = (attribute: string) => {
-    setStudySpot((prev) => ({
-      ...prev,
-      attributes: {
-        ...prev.attributes,
-        [attribute]: !prev.attributes[attribute as keyof typeof prev.attributes],
-      },
-    }));
+  const handleTagToggle = (tag: string) => {
+    setStudySpot((prev) => {
+      // Make sure to cast the tags array properly
+      const currentTags = [...prev.tags] as string[];
+      
+      if (currentTags.includes(tag)) {
+        // Remove tag if already present
+        return {
+          ...prev,
+          tags: currentTags.filter(t => t !== tag)
+        };
+      } else {
+        // Add tag if not present
+        return {
+          ...prev,
+          tags: [...currentTags, tag]
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,11 +84,8 @@ const AddStudySpot = () => {
         description: '',
         address: '',
         extraDirection: '',
-        attributes: {
-          outdoors: false,
-          indoors: false,
-          free: false,
-        },
+        tags: [],
+        coordinates: { lat: 0, lng: 0 }
       });
     } catch (error: any) {
       console.error('Error adding study spot:', error);
@@ -82,6 +94,9 @@ const AddStudySpot = () => {
       setIsSubmitting(false);
     }
   };
+
+  // Available tags 
+  const availableTags = ['outdoors', 'indoors', 'free', 'wifi', 'quiet', 'outlets'];
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -154,29 +169,22 @@ const AddStudySpot = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Attributes</label>
+                <label className="block text-sm font-semibold mb-2">Tags</label>
                 <div className="flex gap-2 flex-wrap">
-                  {['outdoors', 'indoors', 'free'].map((attr) => (
+                  {availableTags.map((tag) => (
                     <button
-                      key={attr}
+                      key={tag}
                       type="button"
-                      onClick={() => handleAttributeChange(attr)}
+                      onClick={() => handleTagToggle(tag)}
                       className={`px-4 py-1 rounded text-sm font-medium transition ${
-                        studySpot.attributes[attr as keyof typeof studySpot.attributes]
+                        studySpot.tags.includes(tag)
                           ? 'bg-blue-600'
                           : 'bg-[#1e293b]'
                       }`}
                     >
-                      {attr.charAt(0).toUpperCase() + attr.slice(1)}
+                      {tag.charAt(0).toUpperCase() + tag.slice(1)}
                     </button>
                   ))}
-                  <button
-                    type="button"
-                    className="px-4 py-1 rounded bg-[#1e293b] text-white"
-                    disabled
-                  >
-                    +
-                  </button>
                 </div>
               </div>
 
@@ -200,4 +208,3 @@ const AddStudySpot = () => {
 };
 
 export default AddStudySpot;
-
