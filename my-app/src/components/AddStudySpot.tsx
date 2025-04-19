@@ -97,6 +97,17 @@ const AddStudySpot = () => {
     } finally {
       setIsSubmitting(false);
     }
+        const email = localStorage.getItem('userEmail') || '';
+
+        const response = await fetch('/api/spots', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'x-user-email': email,        // ★ add
+      },
+      body: JSON.stringify(studySpot),
+    });
+    
   };
 
   // Available tags 
