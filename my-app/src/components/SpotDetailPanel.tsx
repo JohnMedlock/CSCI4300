@@ -5,11 +5,13 @@ type Review = {
 };
 
 type Spot = {
-  title: string;
+  _id: string;
+  name: string;
   address: string;
   description: string;
   tags: string[];
-  photos?: string[];
+  image?: string;         // Primary image (optional)
+  photos?: string[];      // Multiple image URLs
   reviews?: Review[];
 };
 
@@ -20,74 +22,69 @@ type SpotDetailPanelProps = {
 
 const SpotDetailPanel = ({ spot, onClose }: SpotDetailPanelProps) => {
   return (
-    <div className="relative space-y-6">
+    <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden text-white relative">
       {/* Close Button */}
       {onClose && (
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-white bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded"
-          aria-label="Close detail view"
+          className="absolute top-2 right-2 bg-black bg-opacity-70 border border-white/20 rounded-full px-2 py-1 hover:scale-110 transition z-10"
+          aria-label="Close"
         >
           ✕
         </button>
       )}
 
-      {/* Title & Address */}
-      <header>
-        <h2 className="text-2xl font-bold">{spot.title}</h2>
-        <p className="text-sm text-gray-300">{spot.address}</p>
-      </header>
-
-      {/* Tags */}
-      {spot.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {spot.tags.map((tag, i) => (
-            <span
+      {/* Main Image or Gallery Preview */}
+      {spot.photos && spot.photos.length > 0 ? (
+        <div className="overflow-x-auto whitespace-nowrap p-2">
+          {spot.photos.map((url, i) => (
+            <img
               key={i}
-              className="bg-gray-700 text-sm px-3 py-1 rounded-full text-white"
-            >
-              {tag}
-            </span>
+              src={url}
+              alt={`Spot ${i + 1}`}
+              className="inline-block h-48 w-64 object-cover rounded-md mr-2"
+            />
           ))}
         </div>
+      ) : (
+        spot.image && (
+          <img
+            src={spot.image}
+            alt={spot.name}
+            className="w-full h-48 object-cover"
+          />
+        )
       )}
 
-      {/* Description */}
-      <p className="text-sm">{spot.description}</p>
+      {/* Info Section */}
+      <div className="p-4">
+        <h3 className="text-xl font-bold">{spot.name}</h3>
+        <p className="text-sm text-gray-300">{spot.address}</p>
+        <p className="text-sm mt-2">{spot.description}</p>
 
-      {/* Photos */}
-      {spot.photos && spot.photos.length > 0 && (
-        <section>
-          <h3 className="font-semibold text-lg mb-2">Photos</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {spot.photos.map((url, i) => (
-              <img
-                key={i}
-                src={url}
-                alt={`Photo ${i + 1} of ${spot.title}`}
-                className="rounded w-full object-cover max-h-40"
-              />
-            ))}
-          </div>
-        </section>
-      )}
+        <div className="text-xs text-gray-400 mt-3 flex flex-wrap gap-2">
+          {spot.tags.map((tag, i) => (
+            <span key={i}>• {tag}</span>
+          ))}
+        </div>
+      </div>
 
       {/* Reviews */}
       {spot.reviews && spot.reviews.length > 0 && (
-        <section>
-          <h3 className="font-semibold text-lg mb-3">Reviews</h3>
-          <div className="space-y-4">
+        <div className="px-4 pb-4">
+          <h4 className="text-lg font-semibold mt-4 mb-2">Reviews</h4>
+          <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
             {spot.reviews.map((review, i) => (
-              <div key={i} className="space-y-1">
-                <div className="text-yellow-400">
+              <div key={i} className="bg-[#2a2a2a] p-3 rounded-md">
+                <div className="text-yellow-400 mb-1">
                   {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
                 </div>
-                <p className="text-sm font-medium">{review.user}</p>
+                <p className="text-sm font-semibold">{review.user}</p>
                 <p className="text-sm text-gray-300">{review.text}</p>
               </div>
             ))}
           </div>
-        </section>
+        </div>
       )}
     </div>
   );

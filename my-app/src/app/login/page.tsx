@@ -18,20 +18,33 @@ export default function LoginPage() {
   };
 
   const router = useRouter();
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Logging in:', formData);
-  
-    // Simulate login success
-    localStorage.setItem('isLoggedIn', 'true');
-  
-    // Redirect to user profile page
-    router.push('/user');
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert(error.error || 'Login failed');
+        return;
+      }
+
+      const { user } = await res.json();
+
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', user.email); // Needed for profile fetching
+
+      router.push('/user');
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Something went wrong!');
+    }
   };
-  
-
-  
-
 
   return (
     <main className="min-h-screen relative overflow-hidden">

@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 import Image from 'next/image';
 import Footer from '@/components/Footer';
-import connectMongoDB from '../../config/mongodb';
+import connectMongoDB from '../config/mongodb';
 
 export default function SplashPage() {
   connectMongoDB();

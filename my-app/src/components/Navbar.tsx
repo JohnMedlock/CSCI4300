@@ -7,25 +7,32 @@ import { useState, useEffect } from 'react';
 const Navbar = () => {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const email = localStorage.getItem('userEmail');
     setLoggedIn(isLoggedIn);
-  }, []);
 
-  // Simulate user state (replace this with real auth logic)
-  const [user, setUser] = useState(null);
+    const fetchUser = async () => {
+      if (isLoggedIn && email) {
+        try {
+          const res = await fetch('/api/user/profile', {
+            headers: { 'x-user-email': email },
+          });
+          const data = await res.json();
+          setUser(data);
+        } catch (err) {
+          console.error('Failed to fetch user:', err);
+        }
+      }
+    };
 
-  // Example: fetch user from localStorage or an API on mount
-  useEffect(() => {
-    // Replace this with real authentication check
-    const storedUser = null; // e.g., localStorage.getItem('user');
-    setUser(storedUser);
+    fetchUser();
   }, []);
 
   const navItems = [
     { name: 'Map', href: '/map' },
-    { name: 'Saved', href: '/saved' },
     { name: 'Upload', href: '/upload' },
   ];
 
@@ -48,14 +55,14 @@ const Navbar = () => {
           </Link>
         ))}
 
-        {loggedIn ? (
+        {loggedIn && user ? (
           <Link
             href="/user"
             className={`hover:underline ${
               pathname === '/user' ? 'font-semibold' : ''
             }`}
           >
-            harry potter
+            {user.name || 'User'}
           </Link>
         ) : (
           <>

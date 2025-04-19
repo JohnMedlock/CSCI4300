@@ -1,5 +1,5 @@
-import connectMongoDB from "../../../../config/mongodb";
-import StudySpot from "../../../../models/StudySpot";
+import connectMongoDB from "../../../config/mongodb";
+import StudySpot from "../../../models/StudySpot";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 

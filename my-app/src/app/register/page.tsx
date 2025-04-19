@@ -9,7 +9,6 @@ export default function RegisterPage() {
     username: '',
     email: '',
     password: '',
-    major: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -18,19 +17,33 @@ export default function RegisterPage() {
   };
 
   const router = useRouter();
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    
-    localStorage.setItem('isLoggedIn', 'true');
-  
-    
-    router.push('/user');
+
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert(error.error || 'Registration failed');
+        return;
+      }
+
+      const { user } = await res.json();
+
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', user.email);
+
+      router.push('/user');
+    } catch (err) {
+      console.error('Register error:', err);
+      alert('Something went wrong.');
+    }
   };
-  
-
-  
-
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -87,22 +100,6 @@ export default function RegisterPage() {
               className="w-full p-2 rounded bg-[#1e293b] text-white mb-4"
               required
             />
-
-            <label className="block text-sm font-medium mb-1">Major</label>
-            <select
-              name="major"
-              value={formData.major}
-              onChange={handleChange}
-              className="w-full p-2 rounded bg-[#1e293b] text-white mb-6"
-              required
-            >
-              <option value="">Field of study</option>
-              <option value="Computer Science">Computer Science</option>
-              <option value="Engineering">Engineering</option>
-              <option value="Business">Business</option>
-              <option value="Psychology">Psychology</option>
-              {/* Add more as needed */}
-            </select>
 
             <button
               type="submit"
