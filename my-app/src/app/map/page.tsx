@@ -5,8 +5,12 @@ import Navbar from '@/components/Navbar';
 import SpotList from '@/components/SpotList';
 import Map from '@/components/Map';
 import SpotDetailPanel from '@/components/SpotDetailPanel';
-import spotData from '../../data/dummydata.json'; // <- use relative path
 
+type Review = {
+  user: string;
+  text: string;
+  rating: number;
+};
 // study spot props
 type Spot = {
   _id: string;
@@ -18,7 +22,9 @@ type Spot = {
     lng: number;
   };
   tags: string[];
-  image?: string; 
+  image?: string;
+  photoRefs?: string[];
+  reviews?: Review[];
 };
 
 export default function MapPage() {

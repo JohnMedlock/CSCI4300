@@ -53,7 +53,6 @@ export default function ProfileInfo() {
       const email = localStorage.getItem('userEmail');
       if (!email) return;
 
-      // Send to backend
       const res = await fetch('/api/user/profile-picture', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,11 +65,58 @@ export default function ProfileInfo() {
     reader.readAsDataURL(file);
   };
 
-  if (!userData) return <div className="text-white p-10">Loading profile...</div>;
+  const loadingSkeleton = (
+    <div className="text-white min-h-screen relative overflow-hidden">
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url('/images/DarkBlueBackground.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      <div className="relative z-10">
+        <Navbar />
+        <div className="flex flex-col items-center justify-center mt-8 mb-12 px-4">
+          <div className="w-[120px] h-[120px] rounded-full bg-gray-700 animate-pulse mb-4" />
+          <div className="h-6 w-40 bg-gray-700 rounded-md animate-pulse mb-2" />
+          <div className="h-4 w-28 bg-gray-600 rounded-md animate-pulse" />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 px-8 pb-20">
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Liked Study Spots</h3>
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex bg-[#1B263B] rounded-lg shadow-md p-4 mb-4 animate-pulse">
+                <div className="w-[100px] h-[100px] bg-gray-600 rounded-md" />
+                <div className="ml-4 flex flex-col justify-center">
+                  <div className="h-5 w-32 bg-gray-700 rounded mb-2" />
+                  <div className="h-4 w-48 bg-gray-600 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Uploaded Study Spots</h3>
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex bg-[#1B263B] rounded-lg shadow-md p-4 mb-4 animate-pulse">
+                <div className="w-[100px] h-[100px] bg-gray-600 rounded-md" />
+                <div className="ml-4 flex flex-col justify-center">
+                  <div className="h-5 w-32 bg-gray-700 rounded mb-2" />
+                  <div className="h-4 w-48 bg-gray-600 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!userData) return loadingSkeleton;
 
   return (
     <div className="min-h-screen relative overflow-hidden text-white">
-      {/* Background */}
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -80,11 +126,9 @@ export default function ProfileInfo() {
         }}
       />
 
-      {/* Foreground */}
       <div className="relative z-10">
         <Navbar />
 
-        {/* Profile Header */}
         <div className="flex flex-col items-center justify-center mt-8 mb-12 px-4">
           <div className="relative">
             <Image
@@ -105,9 +149,7 @@ export default function ProfileInfo() {
           <p className="text-sm text-gray-300">{userData.email}</p>
         </div>
 
-        {/* Study Spots Section */}
         <div className="grid md:grid-cols-2 gap-6 px-8 pb-20">
-          {/* Liked Study Spots */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Liked Study Spots</h3>
             {userData.likedSpots?.length > 0 ? (
@@ -128,7 +170,6 @@ export default function ProfileInfo() {
             </Link>
           </div>
 
-          {/* Uploaded Study Spots */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Uploaded Study Spots</h3>
             {userData.uploadedSpots?.length > 0 ? (
@@ -156,4 +197,3 @@ export default function ProfileInfo() {
     </div>
   );
 }
-

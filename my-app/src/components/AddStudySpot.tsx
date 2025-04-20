@@ -17,22 +17,17 @@ const AddStudySpot = () => {
     tags: string[];
     coordinates: { lat: number; lng: number };
     image: string;
+    photoRefs?: string[];
   }>({
     name: '',
     description: '',
     address: '',
     extraDirection: '',
-    tags: [], 
+    tags: [],
     coordinates: { lat: 0, lng: 0 },
-    image: ''
+    image: '',
+    photoRefs: [],
   });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setStudySpot((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleTagToggle = (tag: string) => {
     setStudySpot((prev) => {
@@ -53,6 +48,16 @@ const AddStudySpot = () => {
         };
       }
     });
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setStudySpot((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,19 +114,17 @@ const AddStudySpot = () => {
   });
   
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
-  
-  // once user selects address get necessary information
+
   const handlePlaceChanged = () => {
     if (autocomplete) {
       const place = autocomplete.getPlace();
-  
       const placeId = place.place_id;
       const location = place.geometry?.location;
-  
+
       if (!placeId || !location) return;
-  
+
       const service = new google.maps.places.PlacesService(document.createElement('div'));
-  
+
       service.getDetails(
         {
           placeId,
@@ -129,16 +132,18 @@ const AddStudySpot = () => {
         },
         (details, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && details) {
-            const photoUrl = details.photos?.[0]?.getUrl({ maxWidth: 800 });
-  
+            const photoRefs = details.photos?.map((photo) => photo.photo_reference) ?? [];
+            const previewImage = details.photos?.[0]?.getUrl({ maxWidth: 800 }) ?? '';
+
             setStudySpot(prev => ({
               ...prev,
               address: details.formatted_address || '',
               coordinates: {
-                lat: details.geometry?.location?.lat() || 0,
-                lng: details.geometry?.location?.lng() || 0,
+                lat: location.lat(),
+                lng: location.lng(),
               },
-              image: photoUrl || '',
+              image: previewImage,
+              photoRefs: photoRefs,
             }));
           } else {
             console.error('Failed to get place details:', status);
@@ -148,6 +153,7 @@ const AddStudySpot = () => {
     }
   };
 
+  // once user selects address get necessary information
   return (
     <main className="min-h-screen relative overflow-hidden">
       <div className="relative z-10">
@@ -220,13 +226,11 @@ const AddStudySpot = () => {
                   />
                 )}
                 {studySpot.image && (
-                  <div className="mt-4">
-                    <img
-                      src={studySpot.image}
-                      alt="Preview"
-                      className="w-full h-auto rounded-lg shadow"
-                    />
-                  </div>
+                  <img
+                    src={studySpot.image}
+                    alt={studySpot.name || 'Study Spot'}
+                    className="w-full h-32 object-cover"
+                  />
                 )}
               </div>
 

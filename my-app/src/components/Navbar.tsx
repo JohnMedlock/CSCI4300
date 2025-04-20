@@ -7,12 +7,15 @@ import { useState, useEffect } from 'react';
 const Navbar = () => {
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const email = localStorage.getItem('userEmail');
+    const name = localStorage.getItem('userName');
+
     setLoggedIn(isLoggedIn);
+    setUserName(name); // Instant load on first render
 
     const fetchUser = async () => {
       if (isLoggedIn && email) {
@@ -21,7 +24,8 @@ const Navbar = () => {
             headers: { 'x-user-email': email },
           });
           const data = await res.json();
-          setUser(data);
+          setUserName(data.name);
+          localStorage.setItem('userName', data.name); // Keep it fresh
         } catch (err) {
           console.error('Failed to fetch user:', err);
         }
@@ -37,9 +41,14 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-[#354B74] text-white px-6 py-3 flex justify-between items-center shadow-md">
-      <Link href="/" className="text-xl font-bold">
-        MyStudySpace
+    <nav className="bg-white/10 backdrop-blur-lg text-white px-6 py-3 flex justify-between items-center shadow-md">
+      <Link href="/" className="flex items-center gap-2">
+        <img
+          src="/images/logo.png"
+          alt="Logo"
+          className="h-10 w-10 object-contain"
+        />
+        <span className="text-xl font-bold">MyStudySpace</span>
       </Link>
 
       <div className="flex gap-6 items-center">
@@ -55,14 +64,14 @@ const Navbar = () => {
           </Link>
         ))}
 
-        {loggedIn && user ? (
+        {loggedIn ? (
           <Link
             href="/user"
             className={`hover:underline ${
               pathname === '/user' ? 'font-semibold' : ''
             }`}
           >
-            {user.name || 'User'}
+            {userName || 'User'}
           </Link>
         ) : (
           <>
@@ -90,4 +99,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
