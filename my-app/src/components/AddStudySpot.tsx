@@ -145,7 +145,7 @@ const AddStudySpot = () => {
                 lat: details.geometry?.location?.lat() || 0,
                 lng: details.geometry?.location?.lng() || 0,
               },
-              image: photoUrl || '',
+              image: photoUrl || '/images/defaultSpotImg.png', // default image if no spot given from API
             }));
           } else {
             console.error('Failed to get place details:', status);
