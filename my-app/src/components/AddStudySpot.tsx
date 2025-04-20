@@ -57,31 +57,37 @@ const AddStudySpot = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+  
     setIsSubmitting(true);
     setError('');
     setSuccess('');
-    
+  
     try {
-      // Send data to API
+      /* --------------------------------------------------------------
+         Include the logged‑in user’s e‑mail so the API knows who owns
+         the new study spot
+      ----------------------------------------------------------------*/
+      const email = localStorage.getItem('userEmail') || '';
+  
       const response = await fetch('/api/spots', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-user-email': email,   // ★ tell the server who is uploading
         },
         body: JSON.stringify(studySpot),
       });
-      
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to add study spot');
       }
-      
+  
       const result = await response.json();
       console.log('Study spot added successfully:', result);
       setSuccess('Study spot added successfully!');
-      
-      // Clear form
+  
+      // Clear the form after success
       setStudySpot({
         name: '',
         description: '',
@@ -89,15 +95,16 @@ const AddStudySpot = () => {
         extraDirection: '',
         tags: [],
         coordinates: { lat: 0, lng: 0 },
-        image: ''
+        image: '',
       });
-    } catch (error: any) {
-      console.error('Error adding study spot:', error);
-      setError(error.message || 'Failed to add study spot');
+    } catch (err: any) {
+      console.error('Error adding study spot:', err);
+      setError(err.message || 'Failed to add study spot');
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   // Available tags 
   const availableTags = ['outdoors', 'indoors', 'free', 'wifi', 'quiet', 'outlets'];
