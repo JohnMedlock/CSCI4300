@@ -57,30 +57,29 @@ const SpotDetailPanel = ({ spot, onClose }: SpotDetailPanelProps) => {
         ))}
       </div>
 
-      <p className="mb-6 text-gray-200">{spot.description}</p>
-
-      {/* Photos Section */}
-      {spot.photoRefs && spot.photoRefs.length > 0 ? (
-        <>
-          <h3 className="text-xl font-semibold mb-3">Photos</h3>
-          <div className="flex gap-4 overflow-x-auto mb-6">
-            {spot.photoRefs.map((ref, idx) => {
-              const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${ref}&key=${GOOGLE_API_KEY}`;
-              return (
-                <img
-                  key={idx}
-                  src={photoUrl}
-                  alt={`Photo ${idx + 1}`}
-                  className="h-40 w-60 object-cover rounded-md border border-gray-700"
-                  onError={() => console.warn(`Failed to load photoRef: ${ref}`)}
-                />
-              );
-            })}
-          </div>
-        </>
+      {/* Single Image */}
+      {spot.image ? (
+        <img
+          src={spot.image}
+          alt={spot.name}
+          className="w-full h-60 object-cover rounded-md border border-gray-700 mb-6"
+        />
+      ) : spot.photoRefs && spot.photoRefs.length > 0 ? (
+        <img
+          src={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${spot.photoRefs[0]}&key=${GOOGLE_API_KEY}`}
+          alt="Spot"
+          className="w-full h-60 object-cover rounded-md border border-gray-700 mb-6"
+          onError={() =>
+            console.warn(`Failed to load photoRef: ${spot.photoRefs?.[0]}`)
+          }
+        />
       ) : (
-        <p className="text-gray-500 italic mb-6">No photos available.</p>
+        <p className="text-gray-500 italic mb-6">No photo available.</p>
       )}
+
+      {/* Description */}
+      <h3 className="text-xl font-semibold mb-2">Details</h3>
+      <p className="mb-6 text-gray-200">{spot.description}</p>
 
       {/* Reviews Section */}
       {spot.reviews?.length > 0 && (
