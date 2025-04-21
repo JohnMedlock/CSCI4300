@@ -10,6 +10,10 @@ export default function ProfileInfo() {
   const router = useRouter();
   const [userData, setUserData] = useState<any>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [editingSpotId, setEditingSpotId] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -41,6 +45,53 @@ export default function ProfileInfo() {
     router.push('/');
   };
 
+  const handleDeleteSpot = async (spotId: string) => {
+    try {
+      const response = await fetch(`/api/spots/${spotId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setUserData((prev: any) => ({
+          ...prev,
+          uploadedSpots: prev.uploadedSpots.filter((spot: any) => spot._id !== spotId),
+        }));
+      } else {
+        console.error('Failed to delete spot');
+      }
+    } catch (error) {
+      console.error('Error deleting spot:', error);
+    }
+  };
+
+  const handleUpdateSpot = async (spotId: string) => {
+    try {
+      const res = await fetch(`/api/spots/${spotId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: editName, description: editDescription }),
+      });
+  
+      if (res.ok) {
+        const updatedSpot = await res.json();
+        setUserData((prev: any) => ({
+          ...prev,
+          uploadedSpots: prev.uploadedSpots.map((spot: any) =>
+            spot._id === spotId ? updatedSpot : spot
+          ),
+        }));
+        setEditingSpotId(null);
+      } else {
+        console.error('Failed to update spot');
+      }
+    } catch (err) {
+      console.error('Error updating spot:', err);
+    }
+  };
+  
+
   const handleProfileImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -65,58 +116,10 @@ export default function ProfileInfo() {
     reader.readAsDataURL(file);
   };
 
-  const loadingSkeleton = (
-    <div className="text-white min-h-screen relative overflow-hidden">
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: "url('/images/DarkBlueBackground.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      <div className="relative z-10">
-        <Navbar />
-        <div className="flex flex-col items-center justify-center mt-8 mb-12 px-4">
-          <div className="w-[120px] h-[120px] rounded-full bg-gray-700 animate-pulse mb-4" />
-          <div className="h-6 w-40 bg-gray-700 rounded-md animate-pulse mb-2" />
-          <div className="h-4 w-28 bg-gray-600 rounded-md animate-pulse" />
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 px-8 pb-20">
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Liked Study Spots</h3>
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex bg-[#1B263B] rounded-lg shadow-md p-4 mb-4 animate-pulse">
-                <div className="w-[100px] h-[100px] bg-gray-600 rounded-md" />
-                <div className="ml-4 flex flex-col justify-center">
-                  <div className="h-5 w-32 bg-gray-700 rounded mb-2" />
-                  <div className="h-4 w-48 bg-gray-600 rounded" />
-                </div>
-              </div>
-            ))}
-          </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Uploaded Study Spots</h3>
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex bg-[#1B263B] rounded-lg shadow-md p-4 mb-4 animate-pulse">
-                <div className="w-[100px] h-[100px] bg-gray-600 rounded-md" />
-                <div className="ml-4 flex flex-col justify-center">
-                  <div className="h-5 w-32 bg-gray-700 rounded mb-2" />
-                  <div className="h-4 w-48 bg-gray-600 rounded" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  if (!userData) return loadingSkeleton;
+  if (!userData) return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen relative overflow-hidden text-white">
+    <div className="min-h-screen text-white relative overflow-hidden">
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -125,37 +128,35 @@ export default function ProfileInfo() {
           backgroundPosition: 'center',
         }}
       />
-
       <div className="relative z-10">
         <Navbar />
-
-        <div className="flex flex-col items-center justify-center mt-8 mb-12 px-4">
+        <div className="flex flex-col items-center mt-8 mb-12 px-4">
           <div className="relative">
             <Image
               src={previewImage || '/images/defaultProfilePicture.png'}
               alt="Profile"
               width={120}
               height={120}
-              className="rounded-full object-cover border-2 border-white"
+              className="rounded-md w-full sm:w-[100px] h-auto object-cover"
             />
             <input
               type="file"
               accept="image/*"
               onChange={handleProfileImageChange}
-              className="absolute bottom-0 left-0 w-full text-xs text-white bg-black bg-opacity-70 text-center px-2 py-1 cursor-pointer opacity-80 hover:opacity-100 rounded-b-md"
+              className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white text-xs text-center px-2 py-1 cursor-pointer opacity-80 hover:opacity-100 rounded-b-md"
             />
           </div>
           <h2 className="text-2xl font-semibold mt-4">{userData.name}</h2>
           <p className="text-sm text-gray-300">{userData.email}</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 px-8 pb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-4 sm:px-6 md:px-8 pb-20">
           <div>
             <h3 className="text-xl font-semibold mb-4">Liked Study Spots</h3>
             {userData.likedSpots?.length > 0 ? (
               userData.likedSpots.map((spot: any, index: number) => (
                 <div key={index} className="flex bg-[#1B263B] rounded-lg shadow-md p-4 mb-4">
-                  <Image src={spot.image} alt={spot.name} width={100} height={100} className="rounded-md" />
+                  <Image src={spot.image} alt={spot.name} width={100} height={100} className="rounded-md w-full sm:w-[100px] h-auto object-cover" />
                   <div className="ml-4">
                     <h4 className="text-lg font-bold">{spot.name}</h4>
                     <p className="text-sm text-gray-300">{spot.address}</p>
@@ -173,14 +174,60 @@ export default function ProfileInfo() {
           <div>
             <h3 className="text-xl font-semibold mb-4">Uploaded Study Spots</h3>
             {userData.uploadedSpots?.length > 0 ? (
-              userData.uploadedSpots.map((spot: any, index: number) => (
-                <div key={index} className="flex bg-[#1B263B] rounded-lg shadow-md p-4 mb-4">
-                  <Image src={spot.image} alt={spot.name} width={100} height={100} className="rounded-md" />
-                  <div className="ml-4">
-                    <h4 className="text-lg font-bold">{spot.name}</h4>
-                    <p className="text-sm text-gray-300">{spot.address}</p>
-                  </div>
-                </div>
+              userData.uploadedSpots.map((spot: any) => (
+                <div key={spot._id} className="spot-card border p-4 rounded-md shadow-md my-2">
+  {editingSpotId === spot._id ? (
+    <>
+      <input
+        type="text"
+        value={editName}
+        onChange={(e) => setEditName(e.target.value)}
+        className="mb-2 p-1 text-black w-full"
+        placeholder="Name"
+      />
+      <textarea
+        value={editDescription}
+        onChange={(e) => setEditDescription(e.target.value)}
+        className="mb-2 p-1 text-black w-full"
+        placeholder="Description"
+      />
+      <button
+        onClick={() => handleUpdateSpot(spot._id)}
+        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 mr-2"
+      >
+        Save
+      </button>
+      <button
+        onClick={() => setEditingSpotId(null)}
+        className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+      >
+        Cancel
+      </button>
+    </>
+  ) : (
+    <>
+      <h3 className="text-lg font-semibold">{spot.name}</h3>
+      <p>{spot.description}</p>
+      <button
+        onClick={() => {
+          setEditingSpotId(spot._id);
+          setEditName(spot.name);
+          setEditDescription(spot.description);
+        }}
+        className="mt-2 px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
+      >
+        Edit
+      </button>
+      <button
+        onClick={() => handleDeleteSpot(spot._id)}
+        className="mt-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+      >
+        Delete
+      </button>
+    </>
+  )}
+</div>
+
               ))
             ) : (
               <p className="text-gray-400">No uploads yet.</p>
