@@ -37,7 +37,7 @@ const Navbar = () => {
 
   const navItems = [
     { name: 'Map', href: '/map' },
-    { name: 'Upload', href: '/upload' },
+    ...(loggedIn ? [{ name: 'Upload', href: '/upload' }] : []),
   ];
 
   return (

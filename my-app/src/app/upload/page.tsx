@@ -3,8 +3,10 @@
 import React from 'react';
 import AddStudySpot from '../../components/AddStudySpot';
 import Navbar from '../../components/Navbar';
+import useRequireAuth from '@/hooks/useRequireAuth';
 
 export default function UploadPage() {
+  useRequireAuth();
   return (
     <div 
       className="min-h-screen"
