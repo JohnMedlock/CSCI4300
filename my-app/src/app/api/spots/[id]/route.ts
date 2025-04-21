@@ -1,41 +1,41 @@
-import connectMongoDB from "../../../../../config/mongodb";
-import StudySpot from "../../../../../models/StudySpot";
-import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
-import mongoose from "mongoose";
+import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
+import StudySpot from '@/models/StudySpot'; // Adjust path if necessary
+import connectMongoDB from '@/config/mongodb';
 
-interface RouteParams {
-    params: {id: string};
-}
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
 
-export async function GET(request: NextRequest, {params}: RouteParams) {
-    const {id} = await params;
+  try {
     await connectMongoDB();
-    const spot = await StudySpot.findOne({_id: id});
-    return NextResponse.json({spot}, {status: 200});
+    await StudySpot.findByIdAndDelete(id);
+    return NextResponse.json({ message: 'Study spot deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Delete error:', error);
+    return NextResponse.json({ error: 'Failed to delete study spot' }, { status: 500 });
+  }
 }
 
-export async function PUT(request: NextRequest, {params}: RouteParams) {
-    const {id} = await params;
-    const { name, description, address, coordinates, tags, image } = await request.json();
-    await connectMongoDB();
-    await StudySpot.findByIdAndUpdate(id, {name, description, address, coordinates, tags, image});
-    return NextResponse.json({message: "Study spot updated"}, {status: 200});
-}
-
-export async function DELETE(request: NextRequest, {params}: RouteParams) {
-    const {id} = await params;
-    
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return NextResponse.json({message: "Invalid ID Format"}, {status: 400});
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+    const { id } = context.params;
+    const { name, description } = await req.json();
+  
+    try {
+      await connectMongoDB();
+  
+      const updatedSpot = await StudySpot.findByIdAndUpdate(
+        id,
+        { name, description },
+        { new: true }
+      );
+  
+      if (!updatedSpot) {
+        return NextResponse.json({ error: 'Spot not found' }, { status: 404 });
+      }
+  
+      return NextResponse.json(updatedSpot, { status: 200 });
+    } catch (error) {
+      console.error('Error updating spot:', error);
+      return NextResponse.json({ error: 'Failed to update study spot' }, { status: 500 });
     }
-
-    await connectMongoDB();
-    const deletedSpot = await StudySpot.findByIdAndDelete(id);
-
-    if (!deletedSpot) {
-        return NextResponse.json({message: "Study spot not found"}, {status: 404});
-    }
-
-    return NextResponse.json({message: "Study spot deleted"}, {status: 200});
-}
+  }

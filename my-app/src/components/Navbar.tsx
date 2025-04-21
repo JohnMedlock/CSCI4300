@@ -41,7 +41,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white/10 backdrop-blur-lg text-white px-6 py-3 flex justify-between items-center shadow-md">
+    <nav className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0 px-4 sm:px-6 py-3 bg-white/10 backdrop-blur-lg text-white shadow-md">
       <Link href="/" className="flex items-center gap-2">
         <img
           src="/images/logo.png"
