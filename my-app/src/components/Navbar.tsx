@@ -1,57 +1,68 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const pathname = usePathname();
-  const [loggedIn, setLoggedIn] = useState(false);
+  const router = useRouter();
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const email = localStorage.getItem('userEmail');
-    const name = localStorage.getItem('userName');
+    if (typeof window !== 'undefined') {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const email = localStorage.getItem('userEmail');
+      const name = localStorage.getItem('userName');
 
-    setLoggedIn(isLoggedIn);
-    setUserName(name); // Instant load on first render
+      setLoggedIn(isLoggedIn);
+      setUserName(name);
 
-    const fetchUser = async () => {
       if (isLoggedIn && email) {
-        try {
-          const res = await fetch('/api/user/profile', {
-            headers: { 'x-user-email': email },
-          });
-          const data = await res.json();
-          setUserName(data.name);
-          localStorage.setItem('userName', data.name); // Keep it fresh
-        } catch (err) {
-          console.error('Failed to fetch user:', err);
-        }
+        fetch('/api/user/profile', {
+          headers: { 'x-user-email': email },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data?.name) {
+              setUserName(data.name);
+              localStorage.setItem('userName', data.name);
+            }
+          })
+          .catch((err) => console.error('❌ Failed to fetch user:', err));
       }
-    };
-
-    fetchUser();
+    }
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    setLoggedIn(false);
+    setUserName(null);
+    router.push('/login');
+  };
 
   const navItems = [
     { name: 'Map', href: '/map' },
     ...(loggedIn ? [{ name: 'Upload', href: '/upload' }] : []),
   ];
 
+  if (loggedIn === null) return null;
+
   return (
-    <nav className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0 px-4 sm:px-6 py-3 bg-white/10 backdrop-blur-lg text-white shadow-md">
+    <nav className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0 px-2 sm:px-4 py-2 bg-white/10 backdrop-blur-lg text-white shadow-md">
       <Link href="/" className="flex items-center gap-2">
         <img
           src="/images/logo.png"
           alt="Logo"
-          className="h-10 w-10 object-contain"
+          className="h-8 w-8 object-contain"
         />
-        <span className="text-xl font-bold">MyStudySpace</span>
+        <span className="text-lg font-bold">MyStudySpace</span>
       </Link>
 
-      <div className="flex gap-6 items-center">
+      <div className="flex gap-4 items-center">
         {navItems.map((item) => (
           <Link
             key={item.name}
@@ -65,14 +76,22 @@ const Navbar = () => {
         ))}
 
         {loggedIn ? (
-          <Link
-            href="/user"
-            className={`hover:underline ${
-              pathname === '/user' ? 'font-semibold' : ''
-            }`}
-          >
-            {userName || 'User'}
-          </Link>
+          <>
+            <Link
+              href="/user"
+              className={`hover:underline ${
+                pathname === '/user' ? 'font-semibold' : ''
+              }`}
+            >
+              Welcome, {userName || 'User'}
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 px-2 py-1 rounded text-white text-xs"
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <>
             <Link
