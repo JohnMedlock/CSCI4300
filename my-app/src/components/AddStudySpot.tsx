@@ -116,11 +116,6 @@ const AddStudySpot = () => {
   
   // once user selects address get necessary information
   const handlePlaceChanged = () => {
-    const activeElement = document.activeElement;
-    if (activeElement instanceof HTMLElement) {
-      activeElement.blur();
-    }
-
     if (autocomplete) {
       const place = autocomplete.getPlace();
   
@@ -157,6 +152,12 @@ const AddStudySpot = () => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
+      e.preventDefault();
+    }
+  };
+
   return (
     <main className="min-h-screen relative overflow-hidden">
       <div className="relative z-10">
@@ -175,6 +176,7 @@ const AddStudySpot = () => {
           
           <form
             onSubmit={handleSubmit}
+            onKeyDown={handleKeyDown}
             className="w-full max-w-md bg-[#0f172a] bg-opacity-90 text-white rounded-2xl p-8 shadow-lg"
           >
             <div className="space-y-4">
