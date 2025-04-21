@@ -150,7 +150,8 @@ export default function ProfileInfo() {
           <p className="text-sm text-gray-300">{userData.email}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 px-4 sm:px-6 md:px-8 pb-20">
+        <div className="flex justify-center px-4 sm:px-6 md:px-8 pb-20">
+          {/*
           <div>
             <h3 className="text-xl font-semibold mb-4">Liked Study Spots</h3>
             {userData.likedSpots?.length > 0 ? (
@@ -169,28 +170,38 @@ export default function ProfileInfo() {
             <Link href="/upload" className="mt-4 inline-block bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition">
               Add a spot
             </Link>
-          </div>
+          </div>  */}
 
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Uploaded Study Spots</h3>
+          <div className="w-full max-w-2xl">
+            <h3 className="text-2xl font-bold mb-6 text-center w-full border-b border-gray-500 pb-2">Uploaded Study Spots</h3>
             {userData.uploadedSpots?.length > 0 ? (
               userData.uploadedSpots.map((spot: any) => (
                 <div key={spot._id} className="spot-card border p-4 rounded-md shadow-md my-2">
   {editingSpotId === spot._id ? (
     <>
-      <input
-        type="text"
-        value={editName}
-        onChange={(e) => setEditName(e.target.value)}
-        className="mb-2 p-1 text-black w-full"
-        placeholder="Name"
-      />
-      <textarea
-        value={editDescription}
-        onChange={(e) => setEditDescription(e.target.value)}
-        className="mb-2 p-1 text-black w-full"
-        placeholder="Description"
-      />
+      <div>
+        <label className="block text-orange-500 font-semibold mb-1">
+          Edit Location Name:
+        </label>
+        <input
+          type="text"
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+          className="mb-2 p-1 text-white w-full"
+          placeholder="Name"
+        />
+      </div>
+      <div>
+        <label className="block text-orange-500 font-semibold mb-1">
+          Edit Description:
+        </label>
+        <textarea
+          value={editDescription}
+          onChange={(e) => setEditDescription(e.target.value)}
+          className="mb-2 p-1 text-white w-full"
+          placeholder="Description"
+        />
+      </div>
       <button
         onClick={() => handleUpdateSpot(spot._id)}
         className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 mr-2"
