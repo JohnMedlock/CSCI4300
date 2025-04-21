@@ -71,7 +71,7 @@ const AddStudySpot = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-email': email,   // ★ tell the server who is uploading
+          'x-user-email': email,   // tell the server who is uploading
         },
         body: JSON.stringify(studySpot),
       });
@@ -142,7 +142,7 @@ const AddStudySpot = () => {
                 lat: details.geometry?.location?.lat() || 0,
                 lng: details.geometry?.location?.lng() || 0,
               },
-              image: photoUrl || '',
+              image: photoUrl || '/images/defaultSpotImg.png',
             }));
           } else {
             console.error('Failed to get place details:', status);
