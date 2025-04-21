@@ -13,7 +13,6 @@ const AddStudySpot = () => {
     name: string;
     description: string;
     address: string;
-    extraDirection: string;
     tags: string[];
     coordinates: { lat: number; lng: number };
     image: string;
@@ -21,7 +20,6 @@ const AddStudySpot = () => {
     name: '',
     description: '',
     address: '',
-    extraDirection: '',
     tags: [], 
     coordinates: { lat: 0, lng: 0 },
     image: ''
@@ -92,7 +90,6 @@ const AddStudySpot = () => {
         name: '',
         description: '',
         address: '',
-        extraDirection: '',
         tags: [],
         coordinates: { lat: 0, lng: 0 },
         image: '',
@@ -119,6 +116,11 @@ const AddStudySpot = () => {
   
   // once user selects address get necessary information
   const handlePlaceChanged = () => {
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement) {
+      activeElement.blur();
+    }
+
     if (autocomplete) {
       const place = autocomplete.getPlace();
   
@@ -145,7 +147,7 @@ const AddStudySpot = () => {
                 lat: details.geometry?.location?.lat() || 0,
                 lng: details.geometry?.location?.lng() || 0,
               },
-              image: photoUrl || '/images/defaultSpotImg.png', // default image if no spot given from API
+              image: photoUrl || '',
             }));
           } else {
             console.error('Failed to get place details:', status);
@@ -235,18 +237,6 @@ const AddStudySpot = () => {
                     />
                   </div>
                 )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-1">Extra direction</label>
-                <input
-                  type="text"
-                  name="extraDirection"
-                  placeholder="Extra directions"
-                  value={studySpot.extraDirection}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
-                />
               </div>
 
               <div>
