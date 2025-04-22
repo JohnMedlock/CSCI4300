@@ -18,14 +18,22 @@
 
 ## Tech Stack
 
-| Category      | Tools / Libraries                                 |
-|---------------|----------------------------------------------------|
-| Framework     | Next.js 13+ (App Router)                           |
-| Backend       | Node.js, Next.js API Routes                        |
-| Database      | MongoDB Atlas (via Mongoose)                       |
-| Authentication| LocalStorage, bcrypt for password hashing          |
-| Styling       | Tailwind CSS                                       |
-| Mapping       | Google Maps JavaScript API + Places API            |
+---
+
+### Frontend  
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)  
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)  
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)  
+![Google Maps API](https://img.shields.io/badge/Google_Maps_API-4285F4?style=for-the-badge&logo=googlemaps&logoColor=white)
+
+---
+
+### Backend  
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)  
+![Next.js API Routes](https://img.shields.io/badge/Next.js_API_Routes-000000?style=for-the-badge&logo=vercel&logoColor=white)  
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)  
+![Mongoose](https://img.shields.io/badge/Mongoose-880000?style=for-the-badge&logo=mongoose&logoColor=white)  
+![bcrypt](https://img.shields.io/badge/bcrypt-efefef?style=for-the-badge&logo=security&logoColor=black)
 
 ---
 
