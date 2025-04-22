@@ -3,6 +3,7 @@
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
+// Componenet for invalid client routes
 export default function NotFound() {
   return (
     <>
