@@ -9,6 +9,7 @@ const AddStudySpot = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Form state for the new study spot being added
   const [studySpot, setStudySpot] = useState<{
     name: string;
     description: string;
@@ -25,6 +26,7 @@ const AddStudySpot = () => {
     image: ''
   });
 
+  // Handle change in input fields
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -32,6 +34,7 @@ const AddStudySpot = () => {
     setStudySpot((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle toggling tags
   const handleTagToggle = (tag: string) => {
     setStudySpot((prev) => {
       // Make sure to cast the tags array properly
@@ -53,7 +56,9 @@ const AddStudySpot = () => {
     });
   };
 
+  // Handle the submit of the form
   const handleSubmit = async (e: React.FormEvent) => {
+    // Prevent default action
     e.preventDefault();
   
     setIsSubmitting(true);
@@ -61,12 +66,10 @@ const AddStudySpot = () => {
     setSuccess('');
   
     try {
-      /* --------------------------------------------------------------
-         Include the logged‑in user’s e‑mail so the API knows who owns
-         the new study spot
-      ----------------------------------------------------------------*/
+      // User email so API knows who uploaded the spot
       const email = localStorage.getItem('userEmail') || '';
   
+      // POST the new spot to the database
       const response = await fetch('/api/spots', {
         method: 'POST',
         headers: {
@@ -103,10 +106,10 @@ const AddStudySpot = () => {
   };
   
 
-  // Available tags 
+  // Available tags the user can assign to a study spot
   const availableTags = ['outdoors', 'indoors', 'free', 'wifi', 'quiet', 'outlets'];
 
-  // google autocomplete 
+  // Load the Google Maps Places library for the Autocomplete input
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     libraries: ['places'],
@@ -114,11 +117,12 @@ const AddStudySpot = () => {
   
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
   
-  // once user selects address get necessary information
+  // Once user selects address get necessary information
   const handlePlaceChanged = () => {
     if (autocomplete) {
       const place = autocomplete.getPlace();
   
+      // Get Place ID and Coordinates
       const placeId = place.place_id;
       const location = place.geometry?.location;
   
@@ -126,6 +130,7 @@ const AddStudySpot = () => {
   
       const service = new google.maps.places.PlacesService(document.createElement('div'));
   
+      // Get necessary information like photos and formatted address
       service.getDetails(
         {
           placeId,
@@ -135,6 +140,7 @@ const AddStudySpot = () => {
           if (status === google.maps.places.PlacesServiceStatus.OK && details) {
             const photoUrl = details.photos?.[0]?.getUrl({ maxWidth: 800 });
   
+            // Set study spot information
             setStudySpot(prev => ({
               ...prev,
               address: details.formatted_address || '',
@@ -142,7 +148,7 @@ const AddStudySpot = () => {
                 lat: details.geometry?.location?.lat() || 0,
                 lng: details.geometry?.location?.lng() || 0,
               },
-              image: photoUrl || '/images/defaultSpotImg.png',
+              image: photoUrl || '/images/defaultSpotImg.png', // if no image found have default image
             }));
           } else {
             console.error('Failed to get place details:', status);
@@ -152,6 +158,7 @@ const AddStudySpot = () => {
     }
   };
 
+  // Prevent submit of form on pressing "Enter"
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
       e.preventDefault();
@@ -230,6 +237,7 @@ const AddStudySpot = () => {
                     className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
                   />
                 )}
+                {/* Display preview image if one is available from the selected place */}
                 {studySpot.image && (
                   <div className="mt-4">
                     <img

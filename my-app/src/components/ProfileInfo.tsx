@@ -8,13 +8,17 @@ import Link from 'next/link';
 
 export default function ProfileInfo() {
   const router = useRouter();
+
+  // State to hold user data and profile image preview
   const [userData, setUserData] = useState<any>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  // States for editing uploaded study spots
   const [editingSpotId, setEditingSpotId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
 
-
+  // Fetch user data and redirect if not logged in
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const email = localStorage.getItem('userEmail');
@@ -39,12 +43,14 @@ export default function ProfileInfo() {
     fetchUserData();
   }, [router]);
 
+  // Log the user out by clearing localStorage and redirecting
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userEmail');
     router.push('/');
   };
 
+  // Delete a study spot by ID and update state
   const handleDeleteSpot = async (spotId: string) => {
     try {
       const response = await fetch(`/api/spots/${spotId}`, {
@@ -64,6 +70,7 @@ export default function ProfileInfo() {
     }
   };
 
+  // Update a spot's name and description
   const handleUpdateSpot = async (spotId: string) => {
     try {
       const res = await fetch(`/api/spots/${spotId}`, {
@@ -91,7 +98,7 @@ export default function ProfileInfo() {
     }
   };
   
-
+  // Handle image file input and upload new profile picture
   const handleProfileImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -116,10 +123,12 @@ export default function ProfileInfo() {
     reader.readAsDataURL(file);
   };
 
+  // Show loading state if user data isn't loaded yet
   if (!userData) return <div>Loading...</div>;
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
+      {/* Background image */}
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -128,6 +137,7 @@ export default function ProfileInfo() {
           backgroundPosition: 'center',
         }}
       />
+      {/* Main content */}
       <div className="relative z-10">
         <Navbar />
         <div className="flex flex-col items-center mt-8 mb-12 px-4">
@@ -172,73 +182,74 @@ export default function ProfileInfo() {
             </Link>
           </div>  */}
 
+          {/* Uploaded spots list */}
           <div className="w-full max-w-2xl">
             <h3 className="text-2xl font-bold mb-6 text-center w-full border-b border-gray-500 pb-2">Uploaded Study Spots</h3>
             {userData.uploadedSpots?.length > 0 ? (
               userData.uploadedSpots.map((spot: any) => (
                 <div key={spot._id} className="spot-card border p-4 rounded-md shadow-md my-2">
-  {editingSpotId === spot._id ? (
-    <>
-      <div>
-        <label className="block text-orange-500 font-semibold mb-1">
-          Edit Location Name:
-        </label>
-        <input
-          type="text"
-          value={editName}
-          onChange={(e) => setEditName(e.target.value)}
-          className="mb-2 p-1 text-white w-full"
-          placeholder="Name"
-        />
-      </div>
-      <div>
-        <label className="block text-orange-500 font-semibold mb-1">
-          Edit Description:
-        </label>
-        <textarea
-          value={editDescription}
-          onChange={(e) => setEditDescription(e.target.value)}
-          className="mb-2 p-1 text-white w-full"
-          placeholder="Description"
-        />
-      </div>
-      <button
-        onClick={() => handleUpdateSpot(spot._id)}
-        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 mr-2"
-      >
-        Save
-      </button>
-      <button
-        onClick={() => setEditingSpotId(null)}
-        className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-      >
-        Cancel
-      </button>
-    </>
-  ) : (
-    <>
-      <h3 className="text-lg font-semibold">{spot.name}</h3>
-      <p>{spot.description}</p>
-      <button
-        onClick={() => {
-          setEditingSpotId(spot._id);
-          setEditName(spot.name);
-          setEditDescription(spot.description);
-        }}
-        className="mt-2 px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
-      >
-        Edit
-      </button>
-      <button
-        onClick={() => handleDeleteSpot(spot._id)}
-        className="mt-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-      >
-        Delete
-      </button>
-    </>
-  )}
-</div>
-
+                  {editingSpotId === spot._id ? (
+                    <>
+                    {/* Edit spot form */}
+                      <div>
+                        <label className="block text-orange-500 font-semibold mb-1">
+                          Edit Location Name:
+                        </label>
+                        <input
+                          type="text"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="mb-2 p-1 text-white w-full"
+                          placeholder="Name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-orange-500 font-semibold mb-1">
+                          Edit Description:
+                        </label>
+                        <textarea
+                          value={editDescription}
+                          onChange={(e) => setEditDescription(e.target.value)}
+                          className="mb-2 p-1 text-white w-full"
+                          placeholder="Description"
+                        />
+                      </div>
+                      <button
+                        onClick={() => handleUpdateSpot(spot._id)}
+                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 mr-2"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingSpotId(null)}
+                        className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-semibold">{spot.name}</h3>
+                      <p>{spot.description}</p>
+                      <button
+                        onClick={() => {
+                          setEditingSpotId(spot._id);
+                          setEditName(spot.name);
+                          setEditDescription(spot.description);
+                        }}
+                        className="mt-2 px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSpot(spot._id)}
+                        className="mt-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+                </div>
               ))
             ) : (
               <p className="text-gray-400">No uploads yet.</p>

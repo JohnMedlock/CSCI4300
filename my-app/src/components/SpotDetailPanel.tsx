@@ -1,12 +1,7 @@
 'use client';
 import React from 'react';
 
-type Review = {
-  user: string;
-  text: string;
-  rating: number;
-};
-
+// Type declaration for an individual study spot
 type Spot = {
   _id: string;
   name: string;
@@ -19,9 +14,9 @@ type Spot = {
   tags: string[];
   image?: string;
   photoRefs?: string[];
-  reviews?: Review[];
 };
 
+// Detail pane props
 type SpotDetailPanelProps = {
   spot: Spot;
   onClose?: () => void;
@@ -80,30 +75,6 @@ const SpotDetailPanel = ({ spot, onClose }: SpotDetailPanelProps) => {
       {/* Description */}
       <h3 className="text-xl font-semibold mb-2">Details</h3>
       <p className="mb-6 text-gray-200">{spot.description}</p>
-
-      {/* Reviews Section */}
-      {spot.reviews?.length > 0 && (
-        <>
-          <h3 className="text-xl font-semibold mb-4">Reviews</h3>
-          <div className="space-y-4">
-            {spot.reviews.map((review, i) => (
-              <div
-                key={i}
-                className="bg-[#2c2c2c] p-4 rounded-lg border border-gray-700"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <p className="font-bold">{review.user}</p>
-                  <div className="text-yellow-400 text-sm">
-                    {'★'.repeat(review.rating)}
-                    {'☆'.repeat(5 - review.rating)}
-                  </div>
-                </div>
-                <p className="text-gray-300 text-sm">{review.text}</p>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
     </div>
   );
 };

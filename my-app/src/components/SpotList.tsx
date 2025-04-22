@@ -3,7 +3,7 @@
 import SpotCard from "./SpotCard";
 import { useEffect, useState } from "react";
 
-// study spot props
+// Type declaration for an individual study spot
 type Spot = {
   _id: string;
   name: string;
@@ -17,7 +17,7 @@ type Spot = {
   image?: string; 
 };
 
-
+// Functional component to display a list of study spots
 const SpotList = ({
   spots,
   onSelect,
@@ -29,7 +29,7 @@ const SpotList = ({
 }) => {
   const [studySpots, setStudySpots] = useState<Spot[]>([]);
 
-  // get all of the study spots
+  // Fetching study spots when the component is mounted
   useEffect(() => {
     const fetchStudySpots = async () => {
       try {
@@ -46,7 +46,7 @@ const SpotList = ({
   }, []);
 
   return (
-    // map the study spot information to SpotCard(s)
+    // Map the study spot information to SpotCard(s)
     <div className="flex flex-col gap-4">
       {studySpots.map((spot) => (
         <div
