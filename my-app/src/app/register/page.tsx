@@ -2,8 +2,15 @@
 
 import Navbar from '@/components/Navbar';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 
+/**
+ * RegisterPage handles user registration.
+ *
+ * - Collects username, email, and password
+ * - Sends data to the /api/register endpoint
+ * - On success, stores login status and navigates to user profile
+ */
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     username: '',
@@ -11,12 +18,24 @@ export default function RegisterPage() {
     password: '',
   });
 
+  const router = useRouter();
+
+  /**
+   * Handles input field changes and updates form state.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLSelectElement>} e - The change event
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const router = useRouter();
+  /**
+   * Submits the registration form.
+   * Sends user data to the backend and redirects on success.
+   *
+   * @param {React.FormEvent} e - The form submission event
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -47,7 +66,7 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden">
-      {/* Background */}
+      {/* Background image */}
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -57,7 +76,7 @@ export default function RegisterPage() {
         }}
       />
 
-      {/* Foreground */}
+      {/* Foreground content */}
       <div className="relative z-10">
         <Navbar />
 
@@ -113,4 +132,3 @@ export default function RegisterPage() {
     </main>
   );
 }
-

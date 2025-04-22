@@ -2,12 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectMongoDB from '@/lib/db';
 import User from '@/models/User';
 
-export async function POST(req: NextRequest) {
+/**
+ * Updates the user's profile picture based on their email.
+ *
+ * Expects a JSON body with:
+ * - `email`: the user's email address
+ * - `profile_picture`: the new profile picture URL or path
+ *
+ * Responds with updated user data including liked and uploaded spots.
+ *
+ * @param {NextRequest} req - The incoming HTTP request
+ * @returns {Promise<NextResponse>} The server response with updated user info or error
+ */
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const { email, profile_picture } = await req.json();
 
     await connectMongoDB();
 
+    // Find the user and update their profile picture
     const user = await User.findOneAndUpdate(
       { email },
       { profile_picture },
@@ -30,4 +43,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Failed to update profile picture' }, { status: 500 });
   }
 }
-

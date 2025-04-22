@@ -4,20 +4,41 @@ import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { useRouter } from 'next/navigation';
 
-
+/**
+ * LoginPage component for user authentication.
+ *
+ * - Collects username and password
+ * - Submits login data to the backend
+ * - Stores login state in localStorage on success
+ * - Redirects the user to their profile page
+ */
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
   });
 
+  const router = useRouter();
 
+  /**
+   * Updates form data when user types in input fields.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const router = useRouter();
+  /**
+   * Handles form submission to authenticate user.
+   *
+   * Sends credentials to the `/api/login` endpoint.
+   * If successful, stores login state in `localStorage`
+   * and redirects to the user profile page.
+   *
+   * @param {React.FormEvent} e - The form submission event
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -37,7 +58,7 @@ export default function LoginPage() {
       const { user } = await res.json();
 
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userEmail', user.email); // Needed for profile fetching
+      localStorage.setItem('userEmail', user.email);
 
       router.push('/user');
     } catch (err) {
@@ -48,6 +69,7 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden">
+      {/* Background Image */}
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -60,6 +82,7 @@ export default function LoginPage() {
       <div className="relative z-10">
         <Navbar />
 
+        {/* Login Form Container */}
         <div className="flex justify-center items-center min-h-[calc(100vh-64px)] px-4">
           <form
             onSubmit={handleSubmit}
@@ -101,4 +124,3 @@ export default function LoginPage() {
     </main>
   );
 }
-

@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document, models, Types } from 'mongoose';
 
-/* ------------------------------------------------------------------ */
-/*  TypeScript interface                                               */
-/* ------------------------------------------------------------------ */
+/**
+ * IStudySpot defines the shape of a study spot document.
+ */
 export interface IStudySpot extends Document {
   name: string;
   description: string;
@@ -11,34 +11,38 @@ export interface IStudySpot extends Document {
   tags?: string[];
   image?: string;
 
-  /** the user who uploaded this spot */
+  /** Reference to the user who uploaded the spot */
   owner: Types.ObjectId;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Mongoose schema                                                    */
-/* ------------------------------------------------------------------ */
+/**
+ * Mongoose schema for StudySpot, representing a place where students can study.
+ */
 const StudySpotSchema = new Schema<IStudySpot>(
   {
-    name:        { type: String,  required: true },
-    description: { type: String,  required: true },
+    name:        { type: String, required: true },
+    description: { type: String, required: true },
     address:     { type: String },
+
     coordinates: {
       lat: { type: Number, default: 0 },
       lng: { type: Number, default: 0 },
     },
+
     tags:  { type: [String], default: [] },
     image: { type: String },
 
-    /* FK ➜ users collection */
+    // Foreign key to User collection
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
-  { timestamps: true }   // createdAt / updatedAt
+  {
+    timestamps: true, // Adds createdAt and updatedAt fields
+  }
 );
 
-/* ------------------------------------------------------------------ */
-/*  Export (reuse existing model in hot‑reload)                        */
-/* ------------------------------------------------------------------ */
+/**
+ * Exports the compiled StudySpot model, or reuses the existing one during hot-reload.
+ */
 const StudySpot =
   models.StudySpot || mongoose.model<IStudySpot>('StudySpot', StudySpotSchema);
 
