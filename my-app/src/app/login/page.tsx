@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import { useRouter } from 'next/navigation';
+import StudySpot from '@/models/StudySpot';
 
 /**
  * LoginPage component for user authentication.

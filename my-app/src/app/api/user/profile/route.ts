@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectMongoDB from '@/config/mongodb';
 import User from '@/models/User';
-import StudySpot from '@/models/StudySpot';
+import '@/models/StudySpot';
 
 /**
  * Retrieves a user's profile along with their liked and uploaded study spots.
@@ -21,7 +21,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   try {
     const user = await User.findOne({ email })
-      .populate('likedSpots')
       .populate('uploadedSpots');
 
     if (!user) {
