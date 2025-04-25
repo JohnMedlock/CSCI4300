@@ -1,168 +1,119 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useLoadScript, Autocomplete } from '@react-google-maps/api';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLoadScript } from '@react-google-maps/api';
+
+const libraries = ['places']; // avoid re-creating the array on each render
 
 const AddStudySpot = () => {
-  // Loading and error states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Form state for the new study spot being added
-  const [studySpot, setStudySpot] = useState<{
-    name: string;
-    description: string;
-    address: string;
-    tags: string[];
-    coordinates: { lat: number; lng: number };
-    image: string;
-  }>({
+  const [studySpot, setStudySpot] = useState({
     name: '',
     description: '',
     address: '',
-    tags: [], 
+    tags: [],
     coordinates: { lat: 0, lng: 0 },
-    image: ''
+    image: '',
   });
 
-  // Handle change in input fields
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setStudySpot((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle toggling tags
-  const handleTagToggle = (tag: string) => {
+  const handleTagToggle = (tag) => {
     setStudySpot((prev) => {
-      // Make sure to cast the tags array properly
-      const currentTags = [...prev.tags] as string[];
-      
+      const currentTags = [...prev.tags];
       if (currentTags.includes(tag)) {
-        // Remove tag if already present
-        return {
-          ...prev,
-          tags: currentTags.filter(t => t !== tag)
-        };
+        return { ...prev, tags: currentTags.filter((t) => t !== tag) };
       } else {
-        // Add tag if not present
-        return {
-          ...prev,
-          tags: [...currentTags, tag]
-        };
+        return { ...prev, tags: [...currentTags, tag] };
       }
     });
   };
 
-  // Handle the submit of the form
-  const handleSubmit = async (e: React.FormEvent) => {
-    // Prevent default action
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
     setIsSubmitting(true);
     setError('');
     setSuccess('');
-  
+
     try {
-      // User email so API knows who uploaded the spot
       const email = localStorage.getItem('userEmail') || '';
-  
-      // POST the new spot to the database
       const response = await fetch('/api/spots', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-user-email': email,   // tell the server who is uploading
+          'x-user-email': email,
         },
         body: JSON.stringify(studySpot),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to add study spot');
       }
-  
+
       const result = await response.json();
-      console.log('Study spot added successfully:', result);
       setSuccess('Study spot added successfully!');
-  
-      // Clear the form after success
-      setStudySpot({
-        name: '',
-        description: '',
-        address: '',
-        tags: [],
-        coordinates: { lat: 0, lng: 0 },
-        image: '',
-      });
-    } catch (err: any) {
-      console.error('Error adding study spot:', err);
+      setStudySpot({ name: '', description: '', address: '', tags: [], coordinates: { lat: 0, lng: 0 }, image: '' });
+    } catch (err) {
       setError(err.message || 'Failed to add study spot');
     } finally {
       setIsSubmitting(false);
     }
   };
-  
 
-  // Available tags the user can assign to a study spot
   const availableTags = ['outdoors', 'indoors', 'free', 'wifi', 'quiet', 'outlets'];
-
-  // Load the Google Maps Places library for the Autocomplete input
-  const { isLoaded } = useLoadScript({
+  const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places'],
+    libraries,
+    version: 'beta',
   });
-  
-  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
-  
-  // Once user selects address get necessary information
-  const handlePlaceChanged = () => {
-    if (autocomplete) {
-      const place = autocomplete.getPlace();
-  
-      // Get Place ID and Coordinates
-      const placeId = place.place_id;
-      const location = place.geometry?.location;
-  
-      if (!placeId || !location) return;
-  
-      const service = new google.maps.places.PlacesService(document.createElement('div'));
-  
-      // Get necessary information like photos and formatted address
-      service.getDetails(
-        {
-          placeId,
-          fields: ['formatted_address', 'geometry', 'photos', 'name'],
-        },
-        (details, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK && details) {
-            const photoUrl = details.photos?.[0]?.getUrl({ maxWidth: 800 });
-  
-            // Set study spot information
-            setStudySpot(prev => ({
-              ...prev,
-              address: details.formatted_address || '',
-              coordinates: {
-                lat: details.geometry?.location?.lat() || 0,
-                lng: details.geometry?.location?.lng() || 0,
-              },
-              image: photoUrl || '/images/defaultSpotImg.png', // if no image found have default image
-            }));
-          } else {
-            console.error('Failed to get place details:', status);
-          }
-        }
-      );
-    }
-  };
 
-  // Prevent submit of form on pressing "Enter"
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
-      e.preventDefault();
-    }
+  const autocompleteRef = useRef(null);
+
+  useEffect(() => {
+    if (!isLoaded || !autocompleteRef.current) return;
+
+    const autocompleteElement = new google.maps.places.PlaceAutocompleteElement();
+    autocompleteElement.placeholder = 'Enter address';
+    autocompleteRef.current.appendChild(autocompleteElement);
+
+    autocompleteElement.addEventListener('gmp-select', async (event) => {
+      const { placePrediction } = event;
+      const place = placePrediction.toPlace();
+      await place.fetchFields({ fields: ['displayName', 'formattedAddress', 'location', 'photos'] });
+
+      const photo = place.photos?.[0];
+      let photoUrl = '/images/defaultSpotImg.png';
+
+      try {
+        if (photo) {
+          photoUrl = photo.getURI({ maxWidth: 400 });
+        }
+      } catch (error) {
+        console.error('Failed to get photo URI:', error);
+      }
+
+      const result = place.toJSON();
+
+      setStudySpot((prev) => ({
+        ...prev,
+        address: result.formattedAddress || '',
+        coordinates: { lat: result.location.lat, lng: result.location.lng },
+        image: photoUrl,
+      }));
+    });
+
+    return () => autocompleteElement.remove();
+  }, [isLoaded]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') e.preventDefault();
   };
 
   return (
@@ -174,111 +125,48 @@ const AddStudySpot = () => {
               {error}
             </div>
           )}
-          
           {success && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-3 rounded-md max-w-md w-full">
               {success}
             </div>
           )}
-          
-          <form
-            onSubmit={handleSubmit}
-            onKeyDown={handleKeyDown}
-            className="w-full max-w-md bg-[#0f172a] bg-opacity-90 text-white rounded-2xl p-8 shadow-lg"
-          >
+
+          <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="w-full max-w-md bg-[#0f172a] bg-opacity-90 text-white rounded-2xl p-8 shadow-lg">
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold mb-1">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name of location"
-                  value={studySpot.name}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
-                  required
-                />
+                <input type="text" name="name" placeholder="Name of location" value={studySpot.name} onChange={handleChange} className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400" required />
               </div>
-
               <div>
                 <label className="block text-sm font-semibold mb-1">Description</label>
-                <textarea
-                  name="description"
-                  placeholder="Description of location"
-                  value={studySpot.description}
-                  onChange={handleChange}
-                  className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
-                  rows={2}
-                />
+                <textarea name="description" placeholder="Description of location" value={studySpot.description} onChange={handleChange} className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400" rows={2} />
               </div>
-
               <div>
                 <label className="block text-sm font-semibold mb-1">Address</label>
-                {isLoaded ? (
-                  <Autocomplete
-                    onLoad={setAutocomplete}
-                    onPlaceChanged={handlePlaceChanged}
-                  >
-                    <input
-                      type="text"
-                      name="address"
-                      placeholder="Enter address"
-                      value={studySpot.address}
-                      onChange={handleChange}
-                      className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
-                    />
-                  </Autocomplete>
-                ) : (
-                  <input
-                    type="text"
-                    name="address"
-                    placeholder="Loading..."
-                    disabled
-                    className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400"
-                  />
-                )}
-                {/* Display preview image if one is available from the selected place */}
+                {isLoaded ? <div ref={autocompleteRef} className="w-full"></div> : <input type="text" name="address" placeholder="Loading..." disabled className="w-full p-2 rounded bg-[#1e293b] text-white placeholder-gray-400" />}
                 {studySpot.image && (
                   <div className="mt-4">
                     <img
                       src={studySpot.image}
                       alt="Preview"
                       className="w-full h-auto rounded-lg shadow"
+                      onError={(e) => {
+                        e.currentTarget.src = '/images/defaultSpotImg.png';
+                      }}
                     />
                   </div>
                 )}
               </div>
-
               <div>
                 <label className="block text-sm font-semibold mb-2">Tags</label>
                 <div className="flex gap-2 flex-wrap">
                   {availableTags.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => handleTagToggle(tag)}
-                      className={`px-4 py-1 rounded text-sm font-medium transition ${
-                        studySpot.tags.includes(tag)
-                          ? 'bg-blue-600'
-                          : 'bg-[#1e293b]'
-                      }`}
-                    >
-                      {tag.charAt(0).toUpperCase() + tag.slice(1)}
-                    </button>
+                    <button key={tag} type="button" onClick={() => handleTagToggle(tag)} className={`px-4 py-1 rounded text-sm font-medium transition ${studySpot.tags.includes(tag) ? 'bg-blue-600' : 'bg-[#1e293b]'}`}>{tag.charAt(0).toUpperCase() + tag.slice(1)}</button>
                   ))}
                 </div>
               </div>
-
               <div className="pt-4 flex justify-center">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`px-6 py-2 bg-[#334155] hover:bg-[#475569] rounded font-semibold ${
-                    isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                >
-                  {isSubmitting ? 'Submitting...' : 'Submit'}
-                </button>
+                <button type="submit" disabled={isSubmitting} className={`px-6 py-2 bg-[#334155] hover:bg-[#475569] rounded font-semibold ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>{isSubmitting ? 'Submitting...' : 'Submit'}</button>
               </div>
             </div>
           </form>
