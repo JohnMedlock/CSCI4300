@@ -1,7 +1,6 @@
 'use client';
 
 import SpotCard from "./SpotCard";
-import { useEffect, useState } from "react";
 
 // Type declaration for an individual study spot
 type Spot = {
@@ -27,28 +26,10 @@ const SpotList = ({
   onSelect: (spot: Spot) => void;
   selectedId: number | null | undefined;
 }) => {
-  const [studySpots, setStudySpots] = useState<Spot[]>([]);
-
-  // Fetching study spots when the component is mounted
-  useEffect(() => {
-    const fetchStudySpots = async () => {
-      try {
-        const res = await fetch("/api/spots");
-        const data = await res.json();
-        console.log("Fetched spots:", data.spots);
-        setStudySpots(data.spots);
-      } catch (err) {
-        console.error("Failed to fetch study spots:", err);
-      }
-    };
-
-    fetchStudySpots();
-  }, []);
-
   return (
     // Map the study spot information to SpotCard(s)
     <div className="flex flex-col gap-4">
-      {studySpots.map((spot) => (
+      {spots.map((spot) => (
         <div
           key={spot._id}
           onClick={() => onSelect(spot)}

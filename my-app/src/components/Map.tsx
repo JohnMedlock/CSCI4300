@@ -1,7 +1,6 @@
 'use client';
 
 import { APIProvider, Map as GoogleMap, AdvancedMarker } from "@vis.gl/react-google-maps";
-import { useEffect, useState } from "react";
 
 // Type definition for an individual study prop
 type StudySpot = {
